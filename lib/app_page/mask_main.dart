@@ -20,7 +20,9 @@ class _MainMaskState extends State<MainMask> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("KU Dorm"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // automaticallyImplyLeading: false, (For Removing Back Button On AppBar)
+        // Remove // After The Logout Button Is Made And It Works Properly
       ),
 
       body: pageWidgets[pageIndex],
