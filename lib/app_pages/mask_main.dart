@@ -1,6 +1,6 @@
-import 'package:cs342_project/app_page/page_account.dart';
-import 'package:cs342_project/app_page/page_discovery.dart';
-import 'package:cs342_project/app_page/page_search.dart';
+import 'package:cs342_project/app_pages/page_account.dart';
+import 'package:cs342_project/app_pages/page_discovery.dart';
+import 'package:cs342_project/app_pages/page_search.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,9 @@ class _MainMaskState extends State<MainMask> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("KU Dorm"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        // automaticallyImplyLeading: false, (For Removing Back Button On AppBar)
+        // Remove // After The Logout Button Is Made And It Works Properly
       ),
 
       body: pageWidgets[pageIndex],
