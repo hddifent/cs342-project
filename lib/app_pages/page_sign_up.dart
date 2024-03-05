@@ -13,8 +13,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _signupFormKey = GlobalKey<FormState>();
-
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -26,10 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Form(
-          key: _signupFormKey,
-          child: _signup()
-        ),
+        child: _signup(),
       ),
     );
   }
