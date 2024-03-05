@@ -1,4 +1,4 @@
-import 'package:cs342_project/app_page/log_in_page.dart';
+import 'package:cs342_project/app_pages/page_log_in.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
 

@@ -1,11 +1,11 @@
-import 'package:cs342_project/app_page/mask_main.dart';
+import 'package:cs342_project/app_pages/mask_main.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
-import '../widget/text_field_icon.dart';
-import '../widget/green_button.dart';
-import '../widget/text_button.dart';
-import '../widget/welcome_text.dart';
-import 'sign_up_page.dart';
+import '../widgets/text_field_icon.dart';
+import '../widgets/green_button.dart';
+import '../widgets/text_button.dart';
+import '../widgets/welcome_text.dart';
+import 'page_sign_up.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});

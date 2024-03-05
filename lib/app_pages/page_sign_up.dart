@@ -1,9 +1,9 @@
 import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
-import '../widget/text_field_icon.dart';
-import '../widget/green_button.dart';
-import '../widget/welcome_text.dart';
-import '../widget/text_button.dart';
+import '../widgets/text_field_icon.dart';
+import '../widgets/green_button.dart';
+import '../widgets/welcome_text.dart';
+import '../widgets/text_button.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

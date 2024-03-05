@@ -1,6 +1,6 @@
-import 'package:cs342_project/app_page/page_account.dart';
-import 'package:cs342_project/app_page/page_discovery.dart';
-import 'package:cs342_project/app_page/page_search.dart';
+import 'package:cs342_project/app_pages/page_account.dart';
+import 'package:cs342_project/app_pages/page_discovery.dart';
+import 'package:cs342_project/app_pages/page_search.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
 
