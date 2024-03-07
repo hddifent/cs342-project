@@ -1,5 +1,5 @@
-import 'package:cs342_project/app_pages/page_log_in.dart';
-import 'package:cs342_project/constants.dart';
+import '../app_pages/page_log_in.dart';
+import 'constants.dart';
 import 'package:flutter/material.dart';
 
 void main() {
