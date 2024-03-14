@@ -10,11 +10,10 @@ class AppPalette {
   static const Color lightGray = Color(0xFFDDDDDD);
 }
 
-<<<<<<< HEAD
 // Temporary Default Picture EiEi
 const String defaultPictureProfileLink =
   "https://preview.redd.it/fsh2qi0yrbr71.png?width=640&crop=smart&auto=webp&s=927503df32f1134575a10107e1d84331cc129174";
-=======
+
 class AppTextStyle {
   /// 32px Bold
   static const TextStyle title = TextStyle(
@@ -42,4 +41,3 @@ class AppTextStyle {
     fontWeight: FontWeight.bold
   );
 }
->>>>>>> feature/search-page
