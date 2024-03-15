@@ -23,11 +23,22 @@ class SearchPage extends StatelessWidget {
           
           const SizedBox(height: 10),
 
-          const DormCard(
-            dorm: Dorm(dormName: "KU Home", dormDescription: "Right there, inside the university. You can't get any better than this."),
-          )
+          _dormList()
         ]
       ),
     );
   }
+
+  Widget _dormList() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          const DormCard(
+            dorm: Dorm(dormName: "KU Home", dormDescription: "Right there, inside the university. You can't get any better than this."),
+          )
+        ],
+      )
+    );
+  }
+
 }
