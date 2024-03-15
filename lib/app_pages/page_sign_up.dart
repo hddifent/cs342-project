@@ -1,4 +1,4 @@
-import 'package:cs342_project/constants.dart';
+import '../constants.dart';
 import 'package:flutter/material.dart';
 import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
@@ -24,15 +24,16 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _signup(),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: _signup()
+        ),
       ),
     );
   }
 
   Widget _signup() {
-    return ListView(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(20),
+    return Column(
       children: <Widget>[
         welcomeText(),
     
