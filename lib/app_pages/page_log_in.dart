@@ -1,10 +1,10 @@
-import 'package:cs342_project/app_pages/mask_main.dart';
-import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
 import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
 import '../widgets/text_button.dart';
 import '../widgets/welcome_text.dart';
+import '../constants.dart';
+import 'mask_main.dart';
 import 'page_sign_up.dart';
 
 class LogInPage extends StatefulWidget {
@@ -22,15 +22,16 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _login()
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: _login()
+        )
       )
     );
   }
 
   Widget _login() {
-    return ListView(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(20),
+    return Column(
       children: <Widget>[
         welcomeText(),
     
