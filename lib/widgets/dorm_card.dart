@@ -8,8 +8,9 @@ class DormCard extends StatelessWidget {
   static const double pictureRatio = 100.00/120.00;
 
   final Dorm? dorm;
+  final bool? isSpecify;
 
-  const DormCard({super.key, this.dorm});
+  const DormCard({super.key, this.dorm, this.isSpecify = false});
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +43,22 @@ class DormCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(dorm?.dormName ?? "[Dorm Name]", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          _ratingDisplay(),
+                        children: isSpecify! ? 
+                        // Specify
+                        <Widget>[
+                          _ratingDisplay(isSpecify!),
+                          _helpfulDisplay()
+                        ]
+                        // Overview
+                        : <Widget>[
+                          _ratingDisplay(isSpecify!),
                           const Text("฿25,300 / mth.", style: AppTextStyle.heading2)
                         ]
                       ),
+
                       Expanded(
                         child: Text(
                           dorm?.dormDescription ?? lorem,
@@ -68,12 +78,40 @@ class DormCard extends StatelessWidget {
     );
   }
 
-  Widget _ratingDisplay() {
+  Widget _ratingDisplay(bool isSpecify) {
+    // TODO: Actually display the rating.
+    List<Icon> starIcon = [];
+    for (int i = 0; i < (4.8).ceil(); i++) {
+      starIcon.add(
+        const Icon(
+          Icons.star_rounded, 
+          color: AppPalette.gold,
+        )
+      );
+    } 
+    if (isSpecify) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: starIcon
+      );
+    }
     return const Row(
       children: <Widget>[
-        // TODO: Actually display the rating.
         Text("4.8", style: AppTextStyle.heading2),
         Icon(Icons.star_rounded, color: AppPalette.gold)
+      ]
+    );
+  }
+
+  Widget _helpfulDisplay() {
+    // TODO: Actually display the helpful.
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Text('91.2% ', style: AppTextStyle.heading2),
+        Text('(498) ', style: AppTextStyle.heading2),
+        Icon(Icons.thumb_up, color: AppPalette.darkGreen)
       ]
     );
   }

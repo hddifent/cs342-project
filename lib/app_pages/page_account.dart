@@ -81,6 +81,7 @@ class AccountPage extends StatelessWidget {
         children: <Widget>[
           const DormCard(
             dorm: Dorm(dormName: "KU Home", dormDescription: "Right there, inside the university. You can't get any better than this."),
+            isSpecify: true,
           )
         ],
       ),
