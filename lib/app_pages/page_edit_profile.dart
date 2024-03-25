@@ -1,3 +1,4 @@
+import "package:cs342_project/app_pages/page_camera.dart";
 import "package:flutter/material.dart";
 import "../constants.dart";
 import "../widgets/green_button.dart";
@@ -119,7 +120,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             
             IconButton(
-              onPressed: () {}, 
+              onPressed: () => Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const TakePictureScreen()
+                )
+              ), 
               icon: const Icon(Icons.camera_alt_rounded),
               iconSize: 40,
               style: const ButtonStyle(
