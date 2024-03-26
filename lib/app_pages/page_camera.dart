@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cs342_project/constants.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import '../global.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +75,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               children: [
                 Container(color: Colors.black),
                 Center(
+                  widthFactor: MediaQuery.of(context).size.width,
                   child: CameraPreview(_controller),
                 ),
                 _bottomButtons()
