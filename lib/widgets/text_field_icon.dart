@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 
 class TextFieldWithIcon extends StatelessWidget {
   final TextEditingController controller;
-  final bool? isObsecured;
   final Icon prefixIcon;
+  final bool? isObsecured;
+  final Function(String)? onChanged;
   final String prompt;
-  final TextStyle? promptStyle;
+  final Color? promptColor;
   final double? sizedBoxHeight;
 
   const TextFieldWithIcon({super.key, 
     required this.controller, 
     required this.prefixIcon,
     this.isObsecured = false, 
+    this.onChanged,
     required this.prompt,
-    this.promptStyle = const TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+    this.promptColor = Colors.black,
     this.sizedBoxHeight = 0,
   });
 
@@ -40,12 +42,17 @@ class TextFieldWithIcon extends StatelessWidget {
                 alignment: Alignment.center,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
+                  onChanged: onChanged,
                   controller: controller,
                   obscureText: isObsecured!,
                   decoration: InputDecoration(
                     prefixIcon: prefixIcon,
                     hintText: prompt,
-                    hintStyle: promptStyle,
+                    hintStyle: TextStyle(
+                      fontSize: 20, 
+                      fontWeight: FontWeight.w400,
+                      color: promptColor,
+                    ),
                     fillColor: Colors.white,
                     border: InputBorder.none
                   ),

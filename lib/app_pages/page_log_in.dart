@@ -15,8 +15,14 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final _userController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  String _usernameText = '', _passwordText = '';
+
+  String _loginErrorText = 'Log In';
+
+  bool _isLogInError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +44,7 @@ class _LogInPageState extends State<LogInPage> {
         const SizedBox(height: 25),
     
         const Center(
-          child: Text('Log In',
+          child: Text("Log In",
             style: TextStyle(
               color: AppPalette.darkGreen,
               fontSize: 32,
@@ -50,32 +56,90 @@ class _LogInPageState extends State<LogInPage> {
         const SizedBox(height: 20),
     
         TextFieldWithIcon(
-          controller: _userController, 
-          prefixIcon: const Icon(Icons.person, size: 30,),
+          controller: _usernameController, 
+          prefixIcon: Icon(Icons.person, 
+            size: 30, 
+            color: _isLogInError ? AppPalette.red : Colors.black,
+          ),
+          onChanged: (text) {
+            setState(() {
+              if (_usernameController.text != _usernameText) {
+                _isLogInError = false;
+                _usernameText = _usernameController.text;
+                _loginErrorText = 'Log In';
+              }
+              print(_usernameText);
+            });
+          },
           prompt: 'Username',
+          promptColor: _isLogInError ? 
+            AppPalette.red : null,
           sizedBoxHeight: 10,
         ),
     
         TextFieldWithIcon(
           controller: _passwordController, 
+          prefixIcon: Icon(Icons.lock, 
+            size: 30,
+            color: _isLogInError ? AppPalette.red : Colors.black,
+          ),
           isObsecured: true,
-          prefixIcon: const Icon(Icons.lock, size: 30,),
+          onChanged: (text) {
+            setState(() {
+              if (_passwordController.text != _passwordText) {
+                _isLogInError = false;
+                _passwordText = _passwordController.text;
+                _loginErrorText = 'Log In';
+              }
+              print(_passwordText);
+            });
+          },
           prompt: 'Password',
+          promptColor: _isLogInError ? 
+            AppPalette.red : null,
           sizedBoxHeight: 15,
         ),
     
-        greenButton('Log In',
-          //TODO: Add Validation Logic
-          () => Navigator.push(
-            context, 
-            MaterialPageRoute(builder: (context) => const MainMask())
-          )
+        greenButton(_loginErrorText, _loginValidation,
+          isDisabled: _isLogInError
         ),
     
         const SizedBox(height: 20),
     
         _dontHaveAnAccount()
       ],
+    );
+  }
+
+  void _loginValidation() {
+    setState(() {
+      if (_usernameController.text.isEmpty || 
+        _passwordController.text.isEmpty) {
+        _isLogInError = true;
+        _loginErrorText = 'Please fill the blank';
+      }
+    });
+    
+    if (!_isLogInError) { _pushPage(const MainMask()); }
+  }
+
+  void _pushPage(Widget page) {
+    setState(() {
+      if (_isLogInError) { _isLogInError = false; }
+      if (_loginErrorText != 'Log In') { _loginErrorText = 'Log In'; }
+
+      _usernameController.clear();
+      _passwordController.clear();
+
+      _usernameText = '';
+      _passwordText = '';
+
+      primaryFocus?.unfocus();
+    });
+    
+    Navigator.push(
+      context, 
+      MaterialPageRoute(builder: (context) => page)
     );
   }
 
@@ -86,20 +150,14 @@ class _LogInPageState extends State<LogInPage> {
         const Text('Don\'t have an account?'),
         
         textButton('Sign Up', Alignment.center, 57.5,
-          () => Navigator.push(
-            context, 
-            MaterialPageRoute(builder: (context) => const SignUpPage())
-          )
+          () => _pushPage(const SignUpPage())
         ),
 
         const Text('or'),
         
         textButton('browse as guest', Alignment.centerRight, 110,
           //TODO: Add Logic For Guest
-          () => Navigator.push(
-            context, 
-            MaterialPageRoute(builder: (context) => const MainMask())
-          )
+          () => _pushPage(const MainMask())
         ),
 
         const Text('.'),
