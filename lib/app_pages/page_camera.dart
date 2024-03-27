@@ -25,6 +25,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
 
     _initializeControllerFuture = _controller.initialize();
+    _controller.setFlashMode(FlashMode.off);
   }
 
   @override
@@ -137,6 +138,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       )
     );
   }
+
 }
 
 class DisplayPictureScreen extends StatelessWidget {
