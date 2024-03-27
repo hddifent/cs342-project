@@ -18,8 +18,6 @@ class _LogInPageState extends State<LogInPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  String _usernameText = '', _passwordText = '';
-
   String _loginErrorText = 'Log In';
 
   bool _isLogInError = false;
@@ -34,6 +32,13 @@ class _LogInPageState extends State<LogInPage> {
         )
       )
     );
+  }
+
+  void _checkTextFieldChange() {
+    setState(() {
+      _isLogInError = false;
+      _loginErrorText = 'Log In';
+    });
   }
 
   Widget _login() {
@@ -57,47 +62,23 @@ class _LogInPageState extends State<LogInPage> {
     
         TextFieldWithIcon(
           controller: _usernameController, 
-          prefixIcon: Icon(Icons.person, 
-            size: 30, 
-            color: _isLogInError ? AppPalette.red : Colors.black,
-          ),
-          onChanged: (text) {
-            setState(() {
-              if (_usernameController.text != _usernameText) {
-                _isLogInError = false;
-                _usernameText = _usernameController.text;
-                _loginErrorText = 'Log In';
-              }
-              print(_usernameText);
-            });
-          },
+          prefixIcon: const Icon(Icons.person, size: 30,),
+          onChanged: (text) =>
+            _checkTextFieldChange(),
           prompt: 'Username',
-          promptColor: _isLogInError ? 
-            AppPalette.red : null,
           sizedBoxHeight: 10,
+          isErrorLogic: _isLogInError,
         ),
     
         TextFieldWithIcon(
           controller: _passwordController, 
-          prefixIcon: Icon(Icons.lock, 
-            size: 30,
-            color: _isLogInError ? AppPalette.red : Colors.black,
-          ),
+          prefixIcon: const Icon(Icons.lock, size: 30),
           isObsecured: true,
-          onChanged: (text) {
-            setState(() {
-              if (_passwordController.text != _passwordText) {
-                _isLogInError = false;
-                _passwordText = _passwordController.text;
-                _loginErrorText = 'Log In';
-              }
-              print(_passwordText);
-            });
-          },
+          onChanged: (text) => 
+            _checkTextFieldChange(),
           prompt: 'Password',
-          promptColor: _isLogInError ? 
-            AppPalette.red : null,
           sizedBoxHeight: 15,
+          isErrorLogic: _isLogInError,
         ),
     
         greenButton(_loginErrorText, _loginValidation,
@@ -116,7 +97,7 @@ class _LogInPageState extends State<LogInPage> {
       if (_usernameController.text.isEmpty || 
         _passwordController.text.isEmpty) {
         _isLogInError = true;
-        _loginErrorText = 'Please fill the blank';
+        _loginErrorText = 'Please fill the blanks';
       }
     });
     
@@ -130,9 +111,6 @@ class _LogInPageState extends State<LogInPage> {
 
       _usernameController.clear();
       _passwordController.clear();
-
-      _usernameText = '';
-      _passwordText = '';
 
       primaryFocus?.unfocus();
     });

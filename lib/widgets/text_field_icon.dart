@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 class TextFieldWithIcon extends StatelessWidget {
   final TextEditingController controller;
@@ -6,8 +7,8 @@ class TextFieldWithIcon extends StatelessWidget {
   final bool? isObsecured;
   final Function(String)? onChanged;
   final String prompt;
-  final Color? promptColor;
   final double? sizedBoxHeight;
+  final bool? isErrorLogic;
 
   const TextFieldWithIcon({super.key, 
     required this.controller, 
@@ -15,8 +16,8 @@ class TextFieldWithIcon extends StatelessWidget {
     this.isObsecured = false, 
     this.onChanged,
     required this.prompt,
-    this.promptColor = Colors.black,
     this.sizedBoxHeight = 0,
+    this.isErrorLogic = false
   });
 
   @override
@@ -47,11 +48,12 @@ class TextFieldWithIcon extends StatelessWidget {
                   obscureText: isObsecured!,
                   decoration: InputDecoration(
                     prefixIcon: prefixIcon,
+                    prefixIconColor: isErrorLogic! ? AppPalette.red : null,
                     hintText: prompt,
                     hintStyle: TextStyle(
                       fontSize: 20, 
                       fontWeight: FontWeight.w400,
-                      color: promptColor,
+                      color: isErrorLogic! ? AppPalette.red : null,
                     ),
                     fillColor: Colors.white,
                     border: InputBorder.none

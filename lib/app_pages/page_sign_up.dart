@@ -20,6 +20,10 @@ class _SignUpPageState extends State<SignUpPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  String _signUpErrorText = 'Create User';
+
+  bool _isSignUpError = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,6 +34,13 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  void _checkTextFieldChange() {
+    setState(() {
+      _isSignUpError = false;
+      _signUpErrorText = 'Create User';
+    });
   }
 
   Widget _signup() {
@@ -53,51 +64,69 @@ class _SignUpPageState extends State<SignUpPage> {
     
         TextFieldWithIcon(
           controller: _emailController, 
-          prefixIcon: const Icon(Icons.email), 
+          prefixIcon: const Icon(Icons.email, size: 30), 
+          onChanged: (text) => 
+            _checkTextFieldChange(),
           prompt: 'Email',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSignUpError,
         ),
     
         TextFieldWithIcon(
           controller: _firstNameController, 
-          prefixIcon: const Icon(Icons.edit), 
+          prefixIcon: const Icon(Icons.edit, size: 30), 
+          onChanged: (text) =>
+            _checkTextFieldChange(),
           prompt: 'First Name',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSignUpError,
         ),
     
         TextFieldWithIcon(
           controller: _lastNameController, 
-          prefixIcon: const Icon(Icons.edit), 
+          prefixIcon: const Icon(Icons.edit, size: 30), 
+          onChanged: (text) =>
+            _checkTextFieldChange(),
           prompt: 'Last Name',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSignUpError,
         ),
     
         TextFieldWithIcon(
           controller: _usernameController, 
-          prefixIcon: const Icon(Icons.person), 
+          prefixIcon: const Icon(Icons.person, size: 30),
+          onChanged: (text) =>
+            _checkTextFieldChange(), 
           prompt: 'Username',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSignUpError,
         ),
     
         TextFieldWithIcon(
           controller: _passwordController, 
-          prefixIcon: const Icon(Icons.lock), 
-          prompt: 'Password',
+          prefixIcon: const Icon(Icons.lock, size: 30), 
           isObsecured: true,
+          onChanged: (text) =>
+            _checkTextFieldChange(),
+          prompt: 'Password',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSignUpError,
         ),
         
         TextFieldWithIcon(
           controller: _confirmPasswordController, 
-          prefixIcon: const Icon(Icons.lock), 
-          prompt: 'Confirm Password',
+          prefixIcon: const Icon(Icons.lock, size: 30), 
           isObsecured: true,
+          onChanged: (text) =>
+            _checkTextFieldChange(),
+          prompt: 'Confirm Password',
           sizedBoxHeight: 15,
+          isErrorLogic: _isSignUpError,
         ),
     
-        greenButton('Create User',
-          //TODO: Add Logic And Create User Into Database (Firestore?)
-          () => Navigator.pop(context)
+        greenButton(_signUpErrorText,
+          _signUpValidation,
+          isDisabled: _isSignUpError
         ),
           
         const SizedBox(height: 20),
@@ -107,6 +136,38 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  void _signUpValidation() {
+    setState(() {
+      if (_emailController.text.isEmpty ||
+        _firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _usernameController.text.isEmpty || 
+        _passwordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+        _isSignUpError = true;
+        _signUpErrorText = 'Please fill the blanks';
+      }
+    });
+
+    //TODO: Create User Into Database (Firestore?)
+    if (!_isSignUpError) { _popPage(); }
+  }
+
+  void _popPage() {
+    setState(() {
+      _emailController.clear();
+      _firstNameController.clear();
+      _lastNameController.clear();
+      _usernameController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+
+      primaryFocus?.unfocus();
+    });
+
+    Navigator.pop(context);
+  }
+
   Widget _alreadyHaveAnAccount() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +175,7 @@ class _SignUpPageState extends State<SignUpPage> {
         const Text('Already have an account?'),
         
         textButton('Log In', Alignment.centerRight, 40,
-          () => Navigator.pop(context)
+          _popPage
         ),
 
         const Text('.')
