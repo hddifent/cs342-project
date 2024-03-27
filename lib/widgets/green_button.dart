@@ -1,13 +1,14 @@
 import 'package:cs342_project/constants.dart';
 import 'package:flutter/material.dart';
 
-Widget greenButton(String text, void Function() function) {
+Widget greenButton(String text, void Function()? function, {bool isDisabled = false}) {
   return Center(
     child: ElevatedButton(
       onPressed: function, 
-      style: const ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(AppPalette.green),
-        elevation: MaterialStatePropertyAll(10),
+      style: ButtonStyle(
+        backgroundColor: isDisabled ? const MaterialStatePropertyAll(AppPalette.lightGray) :
+          const MaterialStatePropertyAll(AppPalette.green),
+        elevation: const MaterialStatePropertyAll(10),
       ),
       child: Container(
         width: 225,
