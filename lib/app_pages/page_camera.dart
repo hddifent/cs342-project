@@ -25,7 +25,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
 
     _initializeControllerFuture = _controller.initialize();
-    _controller.setFlashMode(FlashMode.off);
   }
 
   @override
@@ -48,6 +47,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       return null;
     }
     try {
+      _controller.setFlashMode(FlashMode.off);
       XFile image = await _controller.takePicture();
       // ignore: use_build_context_synchronously
       await Navigator.of(context).push(
