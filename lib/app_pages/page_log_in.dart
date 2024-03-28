@@ -93,6 +93,8 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   void _loginValidation() {
+    if (_isLogInError) { return; }
+    
     setState(() {
       primaryFocus?.unfocus();
       

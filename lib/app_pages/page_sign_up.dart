@@ -137,6 +137,8 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _signUpValidation() {
+    if (_isSignUpError) { return; }
+    
     setState(() {
       primaryFocus?.unfocus();
 

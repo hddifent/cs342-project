@@ -187,6 +187,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _saveChangesValidation() {
+    if (_isSaveChangesError || 
+      (_firstNameController.text == _firstNameText &&
+      _lastNameController.text == _lastNameText &&
+      _usernameController.text == _usernameText)) { return; }
+
     setState(() {
       primaryFocus!.unfocus();
 
@@ -210,6 +215,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _changePasswordValidation() {
+    if (_isChangePasswordError) { return; }
+
     setState(() {
       primaryFocus!.unfocus();
       if (_oldPasswordController.text.isEmpty ||
@@ -228,8 +235,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (!_isChangePasswordError) {
         _oldPasswordText = _newPasswordController.text;
       }
-
-      print(_oldPasswordText);
 
       _oldPasswordController.clear();
       _newPasswordController.clear();
