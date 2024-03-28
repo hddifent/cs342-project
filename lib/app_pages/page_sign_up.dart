@@ -137,7 +137,11 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _signUpValidation() {
+    if (_isSignUpError) { return; }
+    
     setState(() {
+      primaryFocus?.unfocus();
+
       if (_emailController.text.isEmpty ||
         _firstNameController.text.isEmpty ||
         _lastNameController.text.isEmpty ||
@@ -161,8 +165,6 @@ class _SignUpPageState extends State<SignUpPage> {
       _usernameController.clear();
       _passwordController.clear();
       _confirmPasswordController.clear();
-
-      primaryFocus?.unfocus();
     });
 
     Navigator.pop(context);

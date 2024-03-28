@@ -46,15 +46,12 @@ class TextFieldWithIcon extends StatelessWidget {
                   onChanged: onChanged,
                   controller: controller,
                   obscureText: isObsecured!,
+                  style: _textStyle(),
                   decoration: InputDecoration(
                     prefixIcon: prefixIcon,
                     prefixIconColor: isErrorLogic! ? AppPalette.red : null,
                     hintText: prompt,
-                    hintStyle: TextStyle(
-                      fontSize: 20, 
-                      fontWeight: FontWeight.w400,
-                      color: isErrorLogic! ? AppPalette.red : null,
-                    ),
+                    hintStyle: _textStyle(),
                     fillColor: Colors.white,
                     border: InputBorder.none
                   ),
@@ -65,6 +62,14 @@ class TextFieldWithIcon extends StatelessWidget {
         ),
         SizedBox(height: sizedBoxHeight),
       ],
+    );
+  }
+
+  TextStyle _textStyle() {
+    return TextStyle(
+      fontSize: 20, 
+      fontWeight: FontWeight.w400,
+      color: isErrorLogic! ? AppPalette.red : null,
     );
   }
 }
