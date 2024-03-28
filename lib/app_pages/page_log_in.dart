@@ -93,7 +93,11 @@ class _LogInPageState extends State<LogInPage> {
   }
 
   void _loginValidation() {
+    if (_isLogInError) { return; }
+    
     setState(() {
+      primaryFocus?.unfocus();
+      
       if (_usernameController.text.isEmpty || 
         _passwordController.text.isEmpty) {
         _isLogInError = true;
@@ -111,8 +115,6 @@ class _LogInPageState extends State<LogInPage> {
 
       _usernameController.clear();
       _passwordController.clear();
-
-      primaryFocus?.unfocus();
     });
     
     Navigator.push(

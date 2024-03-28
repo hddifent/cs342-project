@@ -12,11 +12,30 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  late TextEditingController _firstNameController;
+  late TextEditingController _lastNameController;
+  late TextEditingController _usernameController;
+  final _oldPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  //TODO: Change Initialized Value, This Is Just An Example
+  String _firstNameText = 'Rick', _lastNameText = 'Ashley', 
+    _usernameText = 'RickRoll', _oldPasswordText = 'NeverGonnaGiveYouUp';
+
+  String _saveChangesErrorText = 'Save Changes', 
+    _changePasswordErrorText = 'Change Password';
+
+  bool _isSaveChangesError = false, _isChangePasswordError = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _firstNameController = TextEditingController(text: _firstNameText);
+    _lastNameController = TextEditingController(text: _lastNameText);
+    _usernameController = TextEditingController(text: _usernameText);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +51,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
+  void _checkTextFieldChange(bool forSaveChange) {
+    setState(() {
+      if (forSaveChange) {
+        _isSaveChangesError = false;
+        _saveChangesErrorText = 'Save Changes';
+      } else {
+        _isChangePasswordError = false;
+        _changePasswordErrorText = 'Change Password';
+      }
+    });
+  }
+
   Widget _editProfile() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -42,27 +73,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         TextFieldWithIcon(
           controller: _firstNameController, 
-          prefixIcon: const Icon(Icons.edit), 
+          prefixIcon: const Icon(Icons.edit, size: 30),
+          onChanged: (text) => _checkTextFieldChange(true), 
           prompt: 'First Name',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSaveChangesError,
         ),
     
         TextFieldWithIcon(
           controller: _lastNameController, 
-          prefixIcon: const Icon(Icons.edit), 
+          prefixIcon: const Icon(Icons.edit, size: 30),
+          onChanged: (text) => _checkTextFieldChange(true), 
           prompt: 'Last Name',
           sizedBoxHeight: 10,
+          isErrorLogic: _isSaveChangesError,
         ),
     
         TextFieldWithIcon(
           controller: _usernameController, 
-          prefixIcon: const Icon(Icons.person), 
+          prefixIcon: const Icon(Icons.person, size: 30),
+          onChanged: (text) => _checkTextFieldChange(true), 
           prompt: 'Username',
           sizedBoxHeight: 15,
+          isErrorLogic: _isSaveChangesError,
         ),
 
-        greenButton('Save Changes', 
-          () {}
+        greenButton(_saveChangesErrorText, 
+          _saveChangesValidation,
+          isDisabled: _isSaveChangesError
         ),
 
         const SizedBox(height: 20,),
@@ -76,25 +114,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
 
         const SizedBox(height: 20),
-    
+
         TextFieldWithIcon(
-          controller: _passwordController, 
-          prefixIcon: const Icon(Icons.lock), 
-          prompt: 'New Password',
+          controller: _oldPasswordController, 
+          prefixIcon: const Icon(Icons.lock, size: 30), 
           isObsecured: true,
+          onChanged: (text) => _checkTextFieldChange(false),
+          prompt: 'Current Password',
           sizedBoxHeight: 10,
+          isErrorLogic: _isChangePasswordError,
+        ),
+
+        TextFieldWithIcon(
+          controller: _newPasswordController, 
+          prefixIcon: const Icon(Icons.lock, size: 30),
+          isObsecured: true,
+          onChanged: (text) => _checkTextFieldChange(false), 
+          prompt: 'New Password',
+          sizedBoxHeight: 10,
+          isErrorLogic: _isChangePasswordError,
         ),
         
         TextFieldWithIcon(
           controller: _confirmPasswordController, 
-          prefixIcon: const Icon(Icons.lock), 
-          prompt: 'Confirm New Password',
+          prefixIcon: const Icon(Icons.lock, size: 30), 
           isObsecured: true,
+          onChanged: (text) => _checkTextFieldChange(true),
+          prompt: 'Confirm New Password',
           sizedBoxHeight: 15,
+          isErrorLogic: _isChangePasswordError,
         ),
     
-        greenButton('Change Password', 
-          () {}
+        greenButton(_changePasswordErrorText, 
+          _changePasswordValidation,
+          isDisabled: _isChangePasswordError
         ),
       ],
     );
@@ -137,6 +190,62 @@ class _EditProfilePageState extends State<EditProfilePage> {
         )
       ),
     );
+  }
+
+  void _saveChangesValidation() {
+    if (_isSaveChangesError || 
+      (_firstNameController.text == _firstNameText &&
+      _lastNameController.text == _lastNameText &&
+      _usernameController.text == _usernameText)) { return; }
+
+    setState(() {
+      primaryFocus!.unfocus();
+
+      if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _usernameController.text.isEmpty) {
+        _firstNameController.text = _firstNameText;
+        _lastNameController.text = _lastNameText;
+        _usernameController.text = _usernameText;
+        
+        _isSaveChangesError = true;
+        _saveChangesErrorText = 'Please fill the blanks';
+      }
+
+      if (!_isSaveChangesError) { 
+        _firstNameText = _firstNameController.text;
+        _lastNameText = _lastNameController.text;
+        _usernameText = _usernameController.text;
+      }
+    });
+  }
+
+  void _changePasswordValidation() {
+    if (_isChangePasswordError) { return; }
+
+    setState(() {
+      primaryFocus!.unfocus();
+      if (_oldPasswordController.text.isEmpty ||
+        _newPasswordController.text.isEmpty ||
+        _confirmPasswordController.text.isEmpty) {
+        _isChangePasswordError = true;
+        _changePasswordErrorText = 'Please fill the blanks';
+      } else if (_oldPasswordController.text != _oldPasswordText) {
+        _isChangePasswordError = true;
+        _changePasswordErrorText = 'Wrong current password';
+      } else if (_newPasswordController.text != _confirmPasswordController.text) {
+        _isChangePasswordError = true;
+        _changePasswordErrorText = 'Wrong confirmation';
+      }
+
+      if (!_isChangePasswordError) {
+        _oldPasswordText = _newPasswordController.text;
+      }
+
+      _oldPasswordController.clear();
+      _newPasswordController.clear();
+      _confirmPasswordController.clear();
+    });
   }
 
 }

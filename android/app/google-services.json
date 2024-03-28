@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "970939144116",
+    "project_id": "ku-dorm-84be1",
+    "storage_bucket": "ku-dorm-84be1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970939144116:android:9e72601231bd148452c4e1",
+        "android_client_info": {
+          "package_name": "com.example.cs342_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMgrIn5HUjbTGPz4yquq9lca5v2yqUifE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
