@@ -1,4 +1,9 @@
+import "dart:io";
+import "package:cs342_project/app_pages/mask_main.dart";
+import "package:cs342_project/global.dart";
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:image_picker/image_picker.dart";
 import "../constants.dart";
 import "../widgets/green_button.dart";
 import "../widgets/text_field_icon.dart";
@@ -42,6 +47,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         title: const Text("Edit Profile"),
         backgroundColor: AppPalette.green,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            //FIXME
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const MainMask())
+            );
+          }, 
+          icon: const Icon(Icons.arrow_back)
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -155,14 +173,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _profileImage() {
     return CircleAvatar(
       maxRadius: 100,
-      backgroundImage: const NetworkImage(defaultPictureProfileLink),
+      backgroundImage: profileImage,
       child: Container(
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-              onPressed: () {},
+              onPressed: () => takePicture(false),
               icon: const Icon(Icons.image),
               iconSize: 40,
               style: const ButtonStyle(
@@ -172,7 +190,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             
             IconButton(
-              onPressed: () {}, 
+              onPressed: () => takePicture(true),
               icon: const Icon(Icons.camera_alt_rounded),
               iconSize: 40,
               style: const ButtonStyle(
@@ -185,6 +203,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
   }
+
+  Future takePicture(bool fromCamera) async {
+    try {
+      XFile? image;
+      if (fromCamera) { 
+        image = await ImagePicker().pickImage(source: ImageSource.camera); 
+      } else {
+        image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      }
+
+      if (image == null) { return; }
+
+      setState(() {
+        profileImage = FileImage(File(image!.path)) as ImageProvider<Object>;
+      });
+    } on PlatformException catch (e) {
+      if (fromCamera) {
+        print('Failed to take picture from camera: $e');
+      } else {
+        print('Failed to take picture from gallery: $e');
+      }
+    } 
+  }
+  
 
   void _saveChangesValidation() {
     if (_isSaveChangesError || 

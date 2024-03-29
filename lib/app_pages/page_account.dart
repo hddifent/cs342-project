@@ -1,13 +1,19 @@
 import "package:cs342_project/app_pages/page_edit_profile.dart";
-import "package:cs342_project/constants.dart";
 import "package:cs342_project/widgets/green_button.dart";
 import "package:flutter/material.dart";
+import "../global.dart";
 import "../models/dorm.dart";
 import "../widgets/dorm_card.dart";
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
-  
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -43,9 +49,9 @@ class AccountPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const CircleAvatar(
+            CircleAvatar(
               maxRadius: 40,
-              backgroundImage: NetworkImage(defaultPictureProfileLink),
+              backgroundImage: profileImage,
             ),
 
             const SizedBox(width: 10),
@@ -87,5 +93,4 @@ class AccountPage extends StatelessWidget {
       ),
     );
   }
-
 }
