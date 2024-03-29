@@ -1,4 +1,5 @@
 import "package:cs342_project/app_pages/page_camera.dart";
+import "package:cs342_project/global.dart";
 import "package:flutter/material.dart";
 import "../constants.dart";
 import "../widgets/green_button.dart";
@@ -156,7 +157,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _profileImage() {
     return CircleAvatar(
       maxRadius: 100,
-      backgroundImage: const NetworkImage(defaultPictureProfileLink),
+      backgroundImage: profileImage,
       child: Container(
         alignment: Alignment.bottomCenter,
         child: Row(

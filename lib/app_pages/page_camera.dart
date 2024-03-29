@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:cs342_project/app_pages/mask_main.dart';
+import 'package:cs342_project/app_pages/page_edit_profile.dart';
 import 'package:cs342_project/constants.dart';
 import '../global.dart';
 import 'package:camera/camera.dart';
@@ -49,12 +51,19 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     try {
       _controller.setFlashMode(FlashMode.off);
       XFile image = await _controller.takePicture();
-      // ignore: use_build_context_synchronously
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => DisplayPictureScreen(imagePath: image.path)
-        )
-      );
+      setState(() {
+        profileImage = FileImage(File(image.path));
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(builder: (context) => const MainMask())
+        );
+        Navigator.push(
+          context, 
+          MaterialPageRoute(builder: (context) => const EditProfilePage())
+        );
+      });
     } on CameraException catch (e) {
       debugPrint('Error occured while taking picture: $e');
       return null;
@@ -136,31 +145,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
       )
-    );
-  }
-
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({super.key, required this.imagePath});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Display The Picture'),
-        backgroundColor: AppPalette.green,
-      ),
-      body: Center(
-        child: Image.file(
-          File(imagePath),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        )
-      ),
     );
   }
 

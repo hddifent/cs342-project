@@ -1,7 +1,7 @@
 import "package:cs342_project/app_pages/page_edit_profile.dart";
-import "package:cs342_project/constants.dart";
 import "package:cs342_project/widgets/green_button.dart";
 import "package:flutter/material.dart";
+import "../global.dart";
 import "../models/dorm.dart";
 import "../widgets/dorm_card.dart";
 
@@ -43,9 +43,9 @@ class AccountPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const CircleAvatar(
+            CircleAvatar(
               maxRadius: 40,
-              backgroundImage: NetworkImage(defaultPictureProfileLink),
+              backgroundImage: profileImage,
             ),
 
             const SizedBox(width: 10),
