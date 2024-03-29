@@ -15,7 +15,7 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   String _loginErrorText = 'Log In';
@@ -61,11 +61,11 @@ class _LogInPageState extends State<LogInPage> {
         const SizedBox(height: 20),
     
         TextFieldWithIcon(
-          controller: _usernameController, 
-          prefixIcon: const Icon(Icons.person, size: 30,),
+          controller: _emailController, 
+          prefixIcon: const Icon(Icons.mail, size: 30,),
           onChanged: (text) =>
             _checkTextFieldChange(),
-          prompt: 'Username',
+          prompt: 'Email',
           sizedBoxHeight: 10,
           isErrorLogic: _isLogInError,
         ),
@@ -98,7 +98,7 @@ class _LogInPageState extends State<LogInPage> {
     setState(() {
       primaryFocus?.unfocus();
       
-      if (_usernameController.text.isEmpty || 
+      if (_emailController.text.isEmpty || 
         _passwordController.text.isEmpty) {
         _isLogInError = true;
         _loginErrorText = 'Please fill the blanks';
@@ -113,7 +113,7 @@ class _LogInPageState extends State<LogInPage> {
       if (_isLogInError) { _isLogInError = false; }
       if (_loginErrorText != 'Log In') { _loginErrorText = 'Log In'; }
 
-      _usernameController.clear();
+      _emailController.clear();
       _passwordController.clear();
     });
     
