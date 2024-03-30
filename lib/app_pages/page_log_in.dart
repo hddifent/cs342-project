@@ -1,3 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cs342_project/database/firestore.dart';
+import 'package:cs342_project/global.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
@@ -6,6 +10,7 @@ import '../widgets/welcome_text.dart';
 import '../constants.dart';
 import 'mask_main.dart';
 import 'page_sign_up.dart';
+import '../models/app_user.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -92,35 +97,81 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
-  void _loginValidation() {
+  void _loginValidation() async {
     if (_isLogInError) { return; }
     
+    String _email = _emailController.text;
+    String _password = _passwordController.text;
+
     setState(() {
       primaryFocus?.unfocus();
-      
-      if (_emailController.text.isEmpty || 
-        _passwordController.text.isEmpty) {
+
+      if (_email.isEmpty || _password.isEmpty) {
         _isLogInError = true;
         _loginErrorText = 'Please fill the blanks';
       }
     });
+
+    String? uid = await login(_email, _password);
+    setState(() {
+      if (!_isLogInError && uid == null) {
+        _isLogInError = true;
+        _passwordController.clear();
+        _loginErrorText = 'Wrong email/password';
+      }
+    });
     
-    if (!_isLogInError) { _pushPage(const MainMask()); }
+    if (!_isLogInError) { _pushPage(const MainMask(), uid!); }
   }
 
-  void _pushPage(Widget page) {
+  Future<String?>? login(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password
+      );
+      print(credential.user?.uid);
+      return credential.user?.uid;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+    return null;
+  }
+
+  void _pushPage(Widget page, String? uid) async {
+    if (uid != null) {
+      final FirestoreDatabase userDB = FirestoreDatabase('user');
+      final userRef = userDB.getDocumentReference(uid);
+
+      await userRef.get().then(
+        (DocumentSnapshot doc) {
+          final userData = doc.data() as Map<String, dynamic>;
+          print(userData['email']);
+
+          setState(() {
+            currentUser = AppUser.fromJson(userData);
+          });
+        },
+        onError: (e) => print("Error getting document: $e"),
+      );
+    }
+
     setState(() {
       if (_isLogInError) { _isLogInError = false; }
       if (_loginErrorText != 'Log In') { _loginErrorText = 'Log In'; }
 
       _emailController.clear();
       _passwordController.clear();
+
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => page)
+      );
     });
-    
-    Navigator.push(
-      context, 
-      MaterialPageRoute(builder: (context) => page)
-    );
   }
 
   Widget _dontHaveAnAccount() {
@@ -130,14 +181,14 @@ class _LogInPageState extends State<LogInPage> {
         const Text('Don\'t have an account?'),
         
         textButton('Sign Up', Alignment.center, 57.5,
-          () => _pushPage(const SignUpPage())
+          () => _pushPage(const SignUpPage(), null)
         ),
 
         const Text('or'),
         
         textButton('browse as guest', Alignment.centerRight, 110,
           //TODO: Add Logic For Guest
-          () => _pushPage(const MainMask())
+          () => _pushPage(const MainMask(), null)
         ),
 
         const Text('.'),

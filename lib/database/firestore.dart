@@ -1,0 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class FirestoreDatabase {
+  final String collectionPath;
+  final CollectionReference collection;
+
+  FirestoreDatabase(this.collectionPath) : 
+    collection = FirebaseFirestore.instance.collection(collectionPath);
+
+  Stream<QuerySnapshot> getStream(String orderCondition) {
+    final collectionStream = collection.orderBy(
+      orderCondition, descending: false).snapshots();
+
+    return collectionStream;
+  }
+
+  DocumentReference getDocumentReference(String docID) { return collection.doc(docID); }
+
+}

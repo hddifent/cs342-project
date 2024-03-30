@@ -23,9 +23,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  //TODO: Change Initialized Value, This Is Just An Example
-  String _firstNameText = 'Rick', _lastNameText = 'Ashley', 
-    _usernameText = 'RickRoll', _oldPasswordText = 'NeverGonnaGiveYouUp';
+  String _firstNameText = currentUser!.firstName, 
+    _lastNameText = currentUser!.lastName, 
+    _usernameText = currentUser!.username, 
+    _oldPasswordText = currentUser!.password;
 
   String _saveChangesErrorText = 'Save Changes', 
     _changePasswordErrorText = 'Change Password';
