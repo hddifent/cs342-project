@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cs342_project/database/firestore.dart';
-import 'package:cs342_project/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
+import '../widgets/loading.dart';
 import '../widgets/text_button.dart';
+import '../widgets/text_field_icon.dart';
 import '../widgets/welcome_text.dart';
+import '../database/firestore.dart';
+import '../global.dart';
 import '../constants.dart';
+import '../models/app_user.dart';
 import 'mask_main.dart';
 import 'page_sign_up.dart';
-import '../models/app_user.dart';
+
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -38,7 +40,7 @@ class _LogInPageState extends State<LogInPage> {
               child: _login()     
             )
           ),
-          _loading()
+          loading(_isLoading)
         ],
       )
     );
@@ -203,19 +205,6 @@ class _LogInPageState extends State<LogInPage> {
         const Text('.'),
       ],
     );
-  }
-
-  Widget _loading() {
-    if (_isLoading) { 
-      return Container(
-        height: double.infinity,
-        width: double.infinity,
-        alignment: Alignment.center,
-        color: Colors.white,
-        child: const CircularProgressIndicator()
-      ); 
-    }
-    return Container();
   }
 
 }
