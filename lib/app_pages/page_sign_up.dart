@@ -2,8 +2,8 @@ import 'package:cs342_project/database/firestore.dart';
 import 'package:cs342_project/models/app_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:email_validator/email_validator.dart';
 import '../constants.dart';
+import '../widgets/loading.dart';
 import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
 import '../widgets/welcome_text.dart';
@@ -27,17 +27,23 @@ class _SignUpPageState extends State<SignUpPage> {
 
   String _signUpErrorText = 'Create User';
 
-  bool _isSignUpError = false, _isEmailAlreadyExist = false, 
-    _isWeakPassword = false;
+  bool _isSignUpError = false, _isEmailInvalid = false,
+    _isEmailAlreadyExist = false, _isWeakPassword = false,
+    _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: _signup()
-        ),
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: _signup()
+            ),
+          ),
+          loading(_isLoading)
+        ],
       ),
     );
   }
@@ -161,9 +167,6 @@ class _SignUpPageState extends State<SignUpPage> {
         password.isEmpty || confirm.isEmpty) {
         _isSignUpError = true;
         _signUpErrorText = 'Please fill the blanks';
-      } else if (!EmailValidator.validate(email, true)) {
-        _isSignUpError = true;
-        _signUpErrorText = 'Wrong email format';
       } else if (password != confirm) {
         _isSignUpError = true;
         _signUpErrorText = 'Wrong confirmation';
@@ -173,13 +176,19 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     if (_isSignUpError) { return; }
+    _isEmailInvalid = false;
     _isEmailAlreadyExist = false;
+    _isWeakPassword = false; 
     _isSignUpError = false;
     final String? uid = await _signUpUser(email, password);
     setState(() {
-      if (_isEmailAlreadyExist) {
+      if (_isEmailInvalid) {
+        _isSignUpError = true;
+        _signUpErrorText = 'Invalid email';
+      } else if (_isEmailAlreadyExist) {
         _isSignUpError = true;
         _signUpErrorText = 'Email already exists';
+        _emailController.clear();
       } else if (_isWeakPassword) {
         _isSignUpError = true;
         _signUpErrorText = 'Weak password';
@@ -197,28 +206,33 @@ class _SignUpPageState extends State<SignUpPage> {
         email: email,
         password: password,
       );
+      print(credential.user?.uid);
       return credential.user?.uid;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-        _isWeakPassword = true;
+      if (e.code == 'invalid-email') {
+        print('Invalid email address.');
+        _isEmailInvalid = true;
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
         _isEmailAlreadyExist = true;
-      }
+      } else if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        _isWeakPassword = true;
+      } 
     } return null;
   }
 
   void _popPage(String? uid) async {
     if (uid != null) {
+      setState(() => _isLoading = true);
       final FirestoreDatabase userDB = FirestoreDatabase('users');
       await userDB.addDocument(
         uid,
         AppUser(
           email: _emailController.text, 
-          firstName: _firstNameController.text, 
-          lastName: _lastNameController.text, 
-          username: _usernameController.text, 
+          firstName: _firstNameController.text.capitalize(), 
+          lastName: _lastNameController.text.capitalize(), 
+          username: _usernameController.text.toLowerCase(), 
           password: _passwordController.text, 
           profileImageURL: ''
         ).toFirestore()
@@ -252,4 +266,10 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+}
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
 }
