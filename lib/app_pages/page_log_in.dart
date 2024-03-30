@@ -1,11 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
+import '../widgets/loading.dart';
 import '../widgets/text_button.dart';
+import '../widgets/text_field_icon.dart';
 import '../widgets/welcome_text.dart';
+import '../database/firestore.dart';
+import '../global.dart';
 import '../constants.dart';
+import '../models/app_user.dart';
 import 'mask_main.dart';
 import 'page_sign_up.dart';
+
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -15,21 +22,26 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   String _loginErrorText = 'Log In';
 
-  bool _isLogInError = false;
+  bool _isLogInError = false, _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: _login()
-        )
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: _login()     
+            )
+          ),
+          loading(_isLoading)
+        ],
       )
     );
   }
@@ -61,11 +73,12 @@ class _LogInPageState extends State<LogInPage> {
         const SizedBox(height: 20),
     
         TextFieldWithIcon(
-          controller: _usernameController, 
-          prefixIcon: const Icon(Icons.person, size: 30,),
+          controller: _emailController, 
+          prefixIcon: const Icon(Icons.mail, size: 30,),
           onChanged: (text) =>
             _checkTextFieldChange(),
-          prompt: 'Username',
+          textInputType: TextInputType.emailAddress,
+          prompt: 'Email',
           sizedBoxHeight: 10,
           isErrorLogic: _isLogInError,
         ),
@@ -92,35 +105,79 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
-  void _loginValidation() {
+  void _loginValidation() async {
     if (_isLogInError) { return; }
     
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
     setState(() {
       primaryFocus?.unfocus();
-      
-      if (_usernameController.text.isEmpty || 
-        _passwordController.text.isEmpty) {
+
+      if (email.isEmpty || password.isEmpty) {
         _isLogInError = true;
         _loginErrorText = 'Please fill the blanks';
       }
     });
+
+    if (_isLogInError) { return; }
+    final String? uid = await _loginUser(email, password);
+    setState(() {
+      if (uid == null) {
+        _isLogInError = true;
+        _passwordController.clear();
+        _loginErrorText = 'Wrong email/password';
+      }
+    });
     
-    if (!_isLogInError) { _pushPage(const MainMask()); }
+    if (!_isLogInError) { 
+      _pushPage(const MainMask(), uid); 
+    }
   }
 
-  void _pushPage(Widget page) {
+  Future<String?>? _loginUser(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password
+      );
+      return credential.user?.uid;
+    } on FirebaseAuthException { return null; }
+  }
+
+  void _pushPage(Widget page, String? uid) async {
+    primaryFocus!.unfocus();
+
+    if (uid != null) {
+      setState(() => _isLoading = true);
+      final FirestoreDatabase userDB = FirestoreDatabase('users');
+      final userRef = userDB.getDocumentReference(uid);
+
+      await userRef.get().then(
+        (DocumentSnapshot doc) {
+          final userData = doc.data() as Map<String, dynamic>;
+
+          setState(() {
+            currentUser = AppUser.fromFirestore(userData);
+          });
+        },
+        onError: (e) => throw e
+      );
+    }
+
     setState(() {
       if (_isLogInError) { _isLogInError = false; }
       if (_loginErrorText != 'Log In') { _loginErrorText = 'Log In'; }
+      if (_isLoading) { _isLoading = false; }
 
-      _usernameController.clear();
+      _emailController.clear();
       _passwordController.clear();
+
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => page)
+      );
     });
-    
-    Navigator.push(
-      context, 
-      MaterialPageRoute(builder: (context) => page)
-    );
   }
 
   Widget _dontHaveAnAccount() {
@@ -130,14 +187,14 @@ class _LogInPageState extends State<LogInPage> {
         const Text('Don\'t have an account?'),
         
         textButton('Sign Up', Alignment.center, 57.5,
-          () => _pushPage(const SignUpPage())
+          () => _pushPage(const SignUpPage(), null)
         ),
 
         const Text('or'),
         
         textButton('browse as guest', Alignment.centerRight, 110,
           //TODO: Add Logic For Guest
-          () => _pushPage(const MainMask())
+          () => _pushPage(const MainMask(), null)
         ),
 
         const Text('.'),

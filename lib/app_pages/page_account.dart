@@ -60,8 +60,8 @@ class _AccountPageState extends State<AccountPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text("Hello, [Username]!", 
-                  style: TextStyle(
+                Text("Hello, ${currentUser!.username}!", 
+                  style: const TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold
                   ),
