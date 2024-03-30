@@ -25,16 +25,21 @@ class _LogInPageState extends State<LogInPage> {
 
   String _loginErrorText = 'Log In';
 
-  bool _isLogInError = false;
+  bool _isLogInError = false, _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: _login()
-        )
+      body: Stack(
+        children: [
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: _login()     
+            )
+          ),
+          _loading()
+        ],
       )
     );
   }
@@ -121,7 +126,9 @@ class _LogInPageState extends State<LogInPage> {
       }
     });
     
-    if (!_isLogInError) { _pushPage(const MainMask(), uid!); }
+    if (!_isLogInError) { 
+      _pushPage(const MainMask(), uid!); 
+    }
   }
 
   Future<String?>? login(String email, String password) async {
@@ -144,6 +151,7 @@ class _LogInPageState extends State<LogInPage> {
 
   void _pushPage(Widget page, String? uid) async {
     if (uid != null) {
+      setState(() => _isLoading = true);
       final FirestoreDatabase userDB = FirestoreDatabase('user');
       final userRef = userDB.getDocumentReference(uid);
 
@@ -163,6 +171,7 @@ class _LogInPageState extends State<LogInPage> {
     setState(() {
       if (_isLogInError) { _isLogInError = false; }
       if (_loginErrorText != 'Log In') { _loginErrorText = 'Log In'; }
+      if (_isLoading) { _isLoading = false; }
 
       _emailController.clear();
       _passwordController.clear();
@@ -194,6 +203,19 @@ class _LogInPageState extends State<LogInPage> {
         const Text('.'),
       ],
     );
+  }
+
+  Widget _loading() {
+    if (_isLoading) { 
+      return Container(
+        height: double.infinity,
+        width: double.infinity,
+        alignment: Alignment.center,
+        color: Colors.white,
+        child: const CircularProgressIndicator()
+      ); 
+    }
+    return Container();
   }
 
 }
