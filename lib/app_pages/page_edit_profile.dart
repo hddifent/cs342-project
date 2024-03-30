@@ -1,6 +1,10 @@
 import "dart:io";
 import "package:cs342_project/app_pages/mask_main.dart";
+import "package:cs342_project/app_pages/page_sign_up.dart";
+import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/global.dart";
+import "package:cs342_project/models/app_user.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:image_picker/image_picker.dart";
@@ -16,6 +20,8 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  final FirestoreDatabase _userDB = FirestoreDatabase('users');
+
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _usernameController;
@@ -23,15 +29,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  String _firstNameText = currentUser!.firstName, 
-    _lastNameText = currentUser!.lastName, 
-    _usernameText = currentUser!.username, 
-    _oldPasswordText = currentUser!.password;
+  String _firstNameText = currentAppUser!.firstName, 
+    _lastNameText = currentAppUser!.lastName, 
+    _usernameText = currentAppUser!.username;
+  final String  _oldPasswordText = currentAppUser!.password;
 
   String _saveChangesErrorText = 'Save Changes', 
     _changePasswordErrorText = 'Change Password';
 
-  bool _isSaveChangesError = false, _isChangePasswordError = false;
+  bool _isSaveChangesError = false, _isSaveChangesSuccess = false,
+    _isChangePasswordError = false, _isWeakPassword = false,
+    _isChangePasswordSuccess = false;
 
   @override
   void initState() {
@@ -73,9 +81,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       if (forSaveChange) {
         _isSaveChangesError = false;
+        _isSaveChangesSuccess = false;
         _saveChangesErrorText = 'Save Changes';
       } else {
         _isChangePasswordError = false;
+        _isChangePasswordSuccess = false;
         _changePasswordErrorText = 'Change Password';
       }
     });
@@ -96,6 +106,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           prompt: 'First Name',
           sizedBoxHeight: 10,
           isErrorLogic: _isSaveChangesError,
+          isSuccessLogic: _isSaveChangesSuccess,
         ),
     
         TextFieldWithIcon(
@@ -105,6 +116,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           prompt: 'Last Name',
           sizedBoxHeight: 10,
           isErrorLogic: _isSaveChangesError,
+          isSuccessLogic: _isSaveChangesSuccess,
         ),
     
         TextFieldWithIcon(
@@ -114,6 +126,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           prompt: 'Username',
           sizedBoxHeight: 15,
           isErrorLogic: _isSaveChangesError,
+          isSuccessLogic: _isSaveChangesSuccess,
         ),
 
         greenButton(_saveChangesErrorText, 
@@ -141,6 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           prompt: 'Current Password',
           sizedBoxHeight: 10,
           isErrorLogic: _isChangePasswordError,
+          isSuccessLogic: _isChangePasswordSuccess,
         ),
 
         TextFieldWithIcon(
@@ -151,6 +165,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           prompt: 'New Password',
           sizedBoxHeight: 10,
           isErrorLogic: _isChangePasswordError,
+          isSuccessLogic: _isChangePasswordSuccess,
         ),
         
         TextFieldWithIcon(
@@ -161,6 +176,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           prompt: 'Confirm New Password',
           sizedBoxHeight: 15,
           isErrorLogic: _isChangePasswordError,
+          isSuccessLogic: _isChangePasswordSuccess,
         ),
     
         greenButton(_changePasswordErrorText, 
@@ -219,21 +235,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
       setState(() {
         profileImage = FileImage(File(image!.path)) as ImageProvider<Object>;
       });
-    } on PlatformException catch (e) {
-      if (fromCamera) {
-        print('Failed to take picture from camera: $e');
-      } else {
-        print('Failed to take picture from gallery: $e');
-      }
+    } on PlatformException {
+      rethrow;
     } 
   }
   
-
-  void _saveChangesValidation() {
-    if (_isSaveChangesError || 
-      (_firstNameController.text == _firstNameText &&
-      _lastNameController.text == _lastNameText &&
-      _usernameController.text == _usernameText)) { return; }
+  void _saveChangesValidation() async {
+    if (_firstNameController.text.capitalize() == _firstNameText &&
+      _lastNameController.text.capitalize() == _lastNameText &&
+      _usernameController.text.toLowerCase() == _usernameText) 
+    {
+      _setTextFields();
+      return;
+    }
+    if (_isSaveChangesError) { return; }
 
     setState(() {
       primaryFocus!.unfocus();
@@ -241,23 +256,47 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (_firstNameController.text.isEmpty ||
         _lastNameController.text.isEmpty ||
         _usernameController.text.isEmpty) {
-        _firstNameController.text = _firstNameText;
-        _lastNameController.text = _lastNameText;
-        _usernameController.text = _usernameText;
+        _setTextFields();
         
         _isSaveChangesError = true;
         _saveChangesErrorText = 'Please fill the blanks';
       }
+    });
 
-      if (!_isSaveChangesError) { 
-        _firstNameText = _firstNameController.text;
-        _lastNameText = _lastNameController.text;
-        _usernameText = _usernameController.text;
-      }
+    if (!_isSaveChangesError) {
+      setState(() {
+        _firstNameText = _firstNameController.text.capitalize();
+        _lastNameText = _lastNameController.text.capitalize();
+        _usernameText = _usernameController.text.toLowerCase();
+
+        currentAppUser = AppUser(
+          email: currentAppUser!.email, 
+          firstName: _firstNameText, 
+          lastName: _lastNameText, 
+          username: _usernameText, 
+          password: currentAppUser!.password, 
+          profileImageURL: currentAppUser!.profileImageURL
+        );
+        
+        _isSaveChangesSuccess = true;
+        _saveChangesErrorText = 'Successfully Changed';
+      });
+
+      _setTextFields();
+
+      await _userDB.updateDocument(currentUid!, currentAppUser!.toFirestore());
+    }
+  }
+
+  void _setTextFields() {
+    setState(() {
+      _firstNameController.text = _firstNameText;
+      _lastNameController.text = _lastNameText;
+      _usernameController.text = _usernameText;
     });
   }
 
-  void _changePasswordValidation() {
+  void _changePasswordValidation() async {
     if (_isChangePasswordError) { return; }
 
     setState(() {
@@ -274,15 +313,50 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _isChangePasswordError = true;
         _changePasswordErrorText = 'Wrong confirmation';
       }
+    });
 
-      if (!_isChangePasswordError) {
-        _oldPasswordText = _newPasswordController.text;
+    _isWeakPassword = false;
+    await _changePassword();
+    setState(() {
+      if (_isWeakPassword) {
+        _isChangePasswordError = true;
+        _changePasswordErrorText = 'Password should be \nat least 6 letters';
       }
+    });
 
+    if (!_isChangePasswordError) {
+      setState(() {
+        currentAppUser = AppUser(
+          email: currentAppUser!.email, 
+          firstName: currentAppUser!.firstName, 
+          lastName: currentAppUser!.lastName, 
+          username: currentAppUser!.username, 
+          password: _newPasswordController.text, 
+          profileImageURL: currentAppUser!.profileImageURL
+        );
+
+        _isChangePasswordSuccess = true;
+        _changePasswordErrorText = 'Successfully Changed';
+      });
+
+      await _userDB.updateDocument(currentUid!, currentAppUser!.toFirestore());
+    }
+
+    setState(() {
       _oldPasswordController.clear();
       _newPasswordController.clear();
       _confirmPasswordController.clear();
     });
+  }
+
+  Future<void> _changePassword() async {
+    try {
+      await currentUser!.updatePassword(_newPasswordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        _isWeakPassword = true;
+      }
+    }
   }
 
 }

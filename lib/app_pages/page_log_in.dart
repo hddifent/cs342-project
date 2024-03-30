@@ -121,9 +121,9 @@ class _LogInPageState extends State<LogInPage> {
     });
 
     if (_isLogInError) { return; }
-    final String? uid = await _loginUser(email, password);
+    final User? user = await _loginUser(email, password);
     setState(() {
-      if (uid == null) {
+      if (user == null) {
         _isLogInError = true;
         _passwordController.clear();
         _loginErrorText = 'Wrong email/password';
@@ -131,34 +131,36 @@ class _LogInPageState extends State<LogInPage> {
     });
     
     if (!_isLogInError) { 
-      _pushPage(const MainMask(), uid); 
+      _pushPage(const MainMask(), user); 
     }
   }
 
-  Future<String?>? _loginUser(String email, String password) async {
+  Future<User?>? _loginUser(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password
       );
-      return credential.user?.uid;
+      return credential.user;
     } on FirebaseAuthException { return null; }
   }
 
-  void _pushPage(Widget page, String? uid) async {
+  void _pushPage(Widget page, User? user) async {
     primaryFocus!.unfocus();
 
-    if (uid != null) {
+    if (user != null) {
       setState(() => _isLoading = true);
       final FirestoreDatabase userDB = FirestoreDatabase('users');
-      final userRef = userDB.getDocumentReference(uid);
+      final userRef = userDB.getDocumentReference(user.uid);
 
       await userRef.get().then(
         (DocumentSnapshot doc) {
           final userData = doc.data() as Map<String, dynamic>;
 
           setState(() {
-            currentUser = AppUser.fromFirestore(userData);
+            currentAppUser = AppUser.fromFirestore(userData);
+            currentUser = user;
+            currentUid = user.uid;
           });
         },
         onError: (e) => throw e
