@@ -191,7 +191,8 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailController.clear();
       } else if (_isWeakPassword) {
         _isSignUpError = true;
-        _signUpErrorText = 'Weak password';
+        //FIXME
+        _signUpErrorText = 'Password should be \nat least 6 letters';
         _passwordController.clear();
         _confirmPasswordController.clear();
       }
@@ -206,19 +207,15 @@ class _SignUpPageState extends State<SignUpPage> {
         email: email,
         password: password,
       );
-      print(credential.user?.uid);
       return credential.user?.uid;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
-        print('Invalid email address.');
         _isEmailInvalid = true;
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
         _isEmailAlreadyExist = true;
       } else if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
         _isWeakPassword = true;
-      } 
+      }
     } return null;
   }
 

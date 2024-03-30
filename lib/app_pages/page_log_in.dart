@@ -141,15 +141,8 @@ class _LogInPageState extends State<LogInPage> {
         email: email,
         password: password
       );
-      print(credential.user?.uid);
       return credential.user?.uid;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    } return null;
+    } on FirebaseAuthException { return null; }
   }
 
   void _pushPage(Widget page, String? uid) async {
@@ -163,13 +156,12 @@ class _LogInPageState extends State<LogInPage> {
       await userRef.get().then(
         (DocumentSnapshot doc) {
           final userData = doc.data() as Map<String, dynamic>;
-          print(userData['email']);
 
           setState(() {
             currentUser = AppUser.fromFirestore(userData);
           });
         },
-        onError: (e) => print("Error getting document: $e"),
+        onError: (e) => throw e
       );
     }
 

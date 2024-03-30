@@ -14,6 +14,7 @@ Widget greenButton(String text, void Function()? function, {bool isDisabled = fa
         width: 225,
         alignment: Alignment.center,
         child: Text(text,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 20,

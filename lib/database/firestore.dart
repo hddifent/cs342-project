@@ -7,9 +7,10 @@ class FirestoreDatabase {
   FirestoreDatabase(this.collectionPath) : 
     collection = FirebaseFirestore.instance.collection(collectionPath);
 
-  Future<void> addDocument(
-    String docID, 
-    Map<String, dynamic> data) { return collection.doc(docID).set(data); }
+  Future<void> addDocument(String? docID, Map<String, dynamic> data) { 
+    if (docID == null) { collection.add(data); }
+    return collection.doc(docID).set(data); 
+  }
 
   Stream<QuerySnapshot> getStream(String orderCondition) {
     final collectionStream = collection.orderBy(
