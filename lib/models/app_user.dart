@@ -17,7 +17,7 @@ class AppUser {
     required this.profileImageURL,
   });
 
-  factory AppUser.fromJson(Map <String, dynamic> map) {
+  factory AppUser.fromFirestore(Map<String, dynamic> map) {
     return AppUser(
       email: map['email'], 
       firstName: map['firstName'], 
@@ -26,6 +26,17 @@ class AppUser {
       password: map['password'], 
       profileImageURL: map['profileImageURL'] ?? defaultPictureProfileLink
     );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      "email": email,
+      "firstName" : firstName,
+      "lastName" : lastName,
+      "username" : username,
+      "password" : password,
+      "profileImageURL" : profileImageURL
+    };
   }
   
 }

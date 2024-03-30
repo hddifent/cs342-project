@@ -1,5 +1,9 @@
-import '../constants.dart';
+import 'package:cs342_project/database/firestore.dart';
+import 'package:cs342_project/models/app_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
+import '../constants.dart';
 import '../widgets/text_field_icon.dart';
 import '../widgets/green_button.dart';
 import '../widgets/welcome_text.dart';
@@ -13,6 +17,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -22,7 +27,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
   String _signUpErrorText = 'Create User';
 
-  bool _isSignUpError = false;
+  bool _isSignUpError = false, _isEmailAlreadyExist = false, 
+    _isWeakPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +70,8 @@ class _SignUpPageState extends State<SignUpPage> {
     
         TextFieldWithIcon(
           controller: _emailController, 
-          prefixIcon: const Icon(Icons.email, size: 30), 
+          prefixIcon: const Icon(Icons.email, size: 30),
+          textInputType: TextInputType.emailAddress, 
           onChanged: (text) => 
             _checkTextFieldChange(),
           prompt: 'Email',
@@ -136,28 +143,88 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void _signUpValidation() {
+  void _signUpValidation() async {
     if (_isSignUpError) { return; }
-    
+
+    String email = _emailController.text,
+      firstName = _firstNameController.text,
+      lastName = _lastNameController.text,
+      username = _usernameController.text,
+      password = _passwordController.text,
+      confirm = _confirmPasswordController.text;
+
     setState(() {
       primaryFocus?.unfocus();
 
-      if (_emailController.text.isEmpty ||
-        _firstNameController.text.isEmpty ||
-        _lastNameController.text.isEmpty ||
-        _usernameController.text.isEmpty || 
-        _passwordController.text.isEmpty ||
-        _confirmPasswordController.text.isEmpty) {
+      if (email.isEmpty || firstName.isEmpty ||
+        lastName.isEmpty || username.isEmpty || 
+        password.isEmpty || confirm.isEmpty) {
         _isSignUpError = true;
         _signUpErrorText = 'Please fill the blanks';
+      } else if (!EmailValidator.validate(email, true)) {
+        _isSignUpError = true;
+        _signUpErrorText = 'Wrong email format';
+      } else if (password != confirm) {
+        _isSignUpError = true;
+        _signUpErrorText = 'Wrong confirmation';
+        _passwordController.clear();
+        _confirmPasswordController.clear();
       }
     });
 
-    //TODO: Create User Into Database (Firestore?)
-    if (!_isSignUpError) { _popPage(); }
+    if (_isSignUpError) { return; }
+    _isEmailAlreadyExist = false;
+    _isSignUpError = false;
+    final String? uid = await _signUpUser(email, password);
+    setState(() {
+      if (_isEmailAlreadyExist) {
+        _isSignUpError = true;
+        _signUpErrorText = 'Email already exists';
+      } else if (_isWeakPassword) {
+        _isSignUpError = true;
+        _signUpErrorText = 'Weak password';
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+      }
+    });
+
+    if (!_isSignUpError) { _popPage(uid); }
   }
 
-  void _popPage() {
+  Future<String?>? _signUpUser(String email, String password) async {
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return credential.user?.uid;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        _isWeakPassword = true;
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        _isEmailAlreadyExist = true;
+      }
+    } return null;
+  }
+
+  void _popPage(String? uid) async {
+    if (uid != null) {
+      final FirestoreDatabase userDB = FirestoreDatabase('users');
+      await userDB.addDocument(
+        uid,
+        AppUser(
+          email: _emailController.text, 
+          firstName: _firstNameController.text, 
+          lastName: _lastNameController.text, 
+          username: _usernameController.text, 
+          password: _passwordController.text, 
+          profileImageURL: ''
+        ).toFirestore()
+      );
+    }
+
     setState(() {
       _emailController.clear();
       _firstNameController.clear();
@@ -165,9 +232,9 @@ class _SignUpPageState extends State<SignUpPage> {
       _usernameController.clear();
       _passwordController.clear();
       _confirmPasswordController.clear();
-    });
 
-    Navigator.pop(context);
+      Navigator.pop(context);
+    });
   }
 
   Widget _alreadyHaveAnAccount() {
@@ -177,7 +244,7 @@ class _SignUpPageState extends State<SignUpPage> {
         const Text('Already have an account?'),
         
         textButton('Log In', Alignment.centerRight, 40,
-          _popPage
+          () => _popPage(null)
         ),
 
         const Text('.')

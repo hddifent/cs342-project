@@ -5,6 +5,7 @@ class TextFieldWithIcon extends StatelessWidget {
   final TextEditingController controller;
   final Icon prefixIcon;
   final bool? isObsecured;
+  final TextInputType? textInputType;
   final Function(String)? onChanged;
   final String prompt;
   final double? sizedBoxHeight;
@@ -13,7 +14,8 @@ class TextFieldWithIcon extends StatelessWidget {
   const TextFieldWithIcon({super.key, 
     required this.controller, 
     required this.prefixIcon,
-    this.isObsecured = false, 
+    this.isObsecured = false,
+    this.textInputType =  TextInputType.text,
     this.onChanged,
     required this.prompt,
     this.sizedBoxHeight = 0,
@@ -46,6 +48,7 @@ class TextFieldWithIcon extends StatelessWidget {
                   onChanged: onChanged,
                   controller: controller,
                   obscureText: isObsecured!,
+                  keyboardType: textInputType,
                   style: _textStyle(),
                   decoration: InputDecoration(
                     prefixIcon: prefixIcon,

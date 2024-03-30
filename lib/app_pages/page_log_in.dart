@@ -77,6 +77,7 @@ class _LogInPageState extends State<LogInPage> {
           prefixIcon: const Icon(Icons.mail, size: 30,),
           onChanged: (text) =>
             _checkTextFieldChange(),
+          textInputType: TextInputType.emailAddress,
           prompt: 'Email',
           sizedBoxHeight: 10,
           isErrorLogic: _isLogInError,
@@ -107,21 +108,22 @@ class _LogInPageState extends State<LogInPage> {
   void _loginValidation() async {
     if (_isLogInError) { return; }
     
-    String _email = _emailController.text;
-    String _password = _passwordController.text;
+    String email = _emailController.text;
+    String password = _passwordController.text;
 
     setState(() {
       primaryFocus?.unfocus();
 
-      if (_email.isEmpty || _password.isEmpty) {
+      if (email.isEmpty || password.isEmpty) {
         _isLogInError = true;
         _loginErrorText = 'Please fill the blanks';
       }
     });
 
-    String? uid = await login(_email, _password);
+    if (_isLogInError) { return; }
+    final String? uid = await _loginUser(email, password);
     setState(() {
-      if (!_isLogInError && uid == null) {
+      if (uid == null) {
         _isLogInError = true;
         _passwordController.clear();
         _loginErrorText = 'Wrong email/password';
@@ -129,11 +131,11 @@ class _LogInPageState extends State<LogInPage> {
     });
     
     if (!_isLogInError) { 
-      _pushPage(const MainMask(), uid!); 
+      _pushPage(const MainMask(), uid); 
     }
   }
 
-  Future<String?>? login(String email, String password) async {
+  Future<String?>? _loginUser(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
@@ -147,14 +149,15 @@ class _LogInPageState extends State<LogInPage> {
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
       }
-    }
-    return null;
+    } return null;
   }
 
   void _pushPage(Widget page, String? uid) async {
+    primaryFocus!.unfocus();
+
     if (uid != null) {
       setState(() => _isLoading = true);
-      final FirestoreDatabase userDB = FirestoreDatabase('user');
+      final FirestoreDatabase userDB = FirestoreDatabase('users');
       final userRef = userDB.getDocumentReference(uid);
 
       await userRef.get().then(
@@ -163,7 +166,7 @@ class _LogInPageState extends State<LogInPage> {
           print(userData['email']);
 
           setState(() {
-            currentUser = AppUser.fromJson(userData);
+            currentUser = AppUser.fromFirestore(userData);
           });
         },
         onError: (e) => print("Error getting document: $e"),
