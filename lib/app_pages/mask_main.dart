@@ -17,6 +17,8 @@ class _MainMaskState extends State<MainMask> {
   int pageIndex = 0;
   List<Widget> pageWidgets = const [DiscoveryPage(), SearchPage(), AccountPage()];
 
+  bool _isLogOut = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,8 +52,43 @@ class _MainMaskState extends State<MainMask> {
   }
 
   void _logOut() async {
-    if (currentUser != null) { await AuthenticationDatabase.logOutUser(); }
-    setState(() { Navigator.pop(context); });
+    if (currentUser != null) { 
+      _isLogOut = false;
+      await showDialog(
+        context: context, 
+        builder: (context) => AlertDialog(
+          content: const Text(
+            'Do you really want to log out?', 
+            style: TextStyle(fontSize: 20),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () { 
+                _isLogOut = true; 
+                Navigator.pop(context);
+              },
+              child: const Text('Yes')
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _isLogOut = false; 
+                Navigator.pop(context);
+              }, 
+              child: const Text('No')
+            )
+          ],
+          actionsAlignment: MainAxisAlignment.center,
+        )
+      );
+      if (_isLogOut) {
+        await AuthenticationDatabase.logOutUser(); 
+      }
+    } 
+    if (_isLogOut) { 
+      setState(() { 
+        Navigator.pop(context); 
+      }); 
+    }
   }
 
 }
