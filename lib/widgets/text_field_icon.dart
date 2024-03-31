@@ -10,6 +10,7 @@ class TextFieldWithIcon extends StatelessWidget {
   final String prompt;
   final double? sizedBoxHeight;
   final bool? isErrorLogic;
+  final bool? isSuccessLogic;
 
   const TextFieldWithIcon({super.key, 
     required this.controller, 
@@ -19,7 +20,8 @@ class TextFieldWithIcon extends StatelessWidget {
     this.onChanged,
     required this.prompt,
     this.sizedBoxHeight = 0,
-    this.isErrorLogic = false
+    this.isErrorLogic = false,
+    this.isSuccessLogic = false
   });
 
   @override
@@ -52,7 +54,7 @@ class TextFieldWithIcon extends StatelessWidget {
                   style: _textStyle(),
                   decoration: InputDecoration(
                     prefixIcon: prefixIcon,
-                    prefixIconColor: isErrorLogic! ? AppPalette.red : null,
+                    prefixIconColor: _colorLogic(),
                     hintText: prompt,
                     hintStyle: _textStyle(),
                     fillColor: Colors.white,
@@ -72,7 +74,13 @@ class TextFieldWithIcon extends StatelessWidget {
     return TextStyle(
       fontSize: 20, 
       fontWeight: FontWeight.w400,
-      color: isErrorLogic! ? AppPalette.red : null,
+      color: _colorLogic(),
     );
+  }
+
+  Color? _colorLogic() {
+    return isErrorLogic! ? 
+      AppPalette.red : 
+      isSuccessLogic! ? AppPalette.darkGreen : null;
   }
 }

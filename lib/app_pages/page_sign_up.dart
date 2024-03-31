@@ -1,6 +1,5 @@
-import 'package:cs342_project/database/firestore.dart';
+import 'package:cs342_project/database/firebase_auth.dart';
 import 'package:cs342_project/models/app_user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../widgets/loading.dart';
@@ -17,7 +16,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -27,9 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   String _signUpErrorText = 'Create User';
 
-  bool _isSignUpError = false, _isEmailInvalid = false,
-    _isEmailAlreadyExist = false, _isWeakPassword = false,
-    _isLoading = false;
+  bool _isSignUpError = false, _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -176,20 +172,16 @@ class _SignUpPageState extends State<SignUpPage> {
     });
 
     if (_isSignUpError) { return; }
-    _isEmailInvalid = false;
-    _isEmailAlreadyExist = false;
-    _isWeakPassword = false; 
-    _isSignUpError = false;
-    final String? uid = await _signUpUser(email, password);
+    final String? uid = await AuthenticationDatabase.signUpUser(email, password);
     setState(() {
-      if (_isEmailInvalid) {
+      if (uid == 'invalid-email') {
         _isSignUpError = true;
         _signUpErrorText = 'Invalid email';
-      } else if (_isEmailAlreadyExist) {
+      } else if (uid == 'email-already-in-use') {
         _isSignUpError = true;
         _signUpErrorText = 'Email already exists';
         _emailController.clear();
-      } else if (_isWeakPassword) {
+      } else if (uid == 'weak-password') {
         _isSignUpError = true;
         //FIXME
         _signUpErrorText = 'Password should be \nat least 6 letters';
@@ -201,30 +193,11 @@ class _SignUpPageState extends State<SignUpPage> {
     if (!_isSignUpError) { _popPage(uid); }
   }
 
-  Future<String?>? _signUpUser(String email, String password) async {
-    try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return credential.user?.uid;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
-        _isEmailInvalid = true;
-      } else if (e.code == 'email-already-in-use') {
-        _isEmailAlreadyExist = true;
-      } else if (e.code == 'weak-password') {
-        _isWeakPassword = true;
-      }
-    } return null;
-  }
-
   void _popPage(String? uid) async {
     if (uid != null) {
       setState(() => _isLoading = true);
-      final FirestoreDatabase userDB = FirestoreDatabase('users');
-      await userDB.addDocument(
-        uid,
+      await AuthenticationDatabase.signingUp(
+        uid, 
         AppUser(
           email: _emailController.text, 
           firstName: _firstNameController.text.capitalize(), 
@@ -232,7 +205,7 @@ class _SignUpPageState extends State<SignUpPage> {
           username: _usernameController.text.toLowerCase(), 
           password: _passwordController.text, 
           profileImageURL: ''
-        ).toFirestore()
+        )
       );
     }
 

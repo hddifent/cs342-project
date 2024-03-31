@@ -51,7 +51,7 @@ class _AccountPageState extends State<AccountPage> {
           children: <Widget>[
             CircleAvatar(
               maxRadius: 40,
-              backgroundImage: profileImage,
+              backgroundImage: currentAppUser!.getProfileImage(),
             ),
 
             const SizedBox(width: 10),
@@ -60,7 +60,7 @@ class _AccountPageState extends State<AccountPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("Hello, ${currentUser!.username}!", 
+                Text("Hello, ${currentAppUser!.username}!", 
                   style: const TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold
