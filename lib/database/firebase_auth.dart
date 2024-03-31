@@ -59,4 +59,10 @@ class AuthenticationDatabase {
     }
   }
 
+  static Future logOutUser() async {
+    await auth.signOut();
+    currentAppUser = null;
+    currentUser = null;
+  }
+
 }

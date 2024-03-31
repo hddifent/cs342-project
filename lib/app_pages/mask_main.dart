@@ -2,6 +2,8 @@ import 'package:cs342_project/app_pages/page_account.dart';
 import 'package:cs342_project/app_pages/page_discovery.dart';
 import 'package:cs342_project/app_pages/page_search.dart';
 import 'package:cs342_project/constants.dart';
+import 'package:cs342_project/database/firebase_auth.dart';
+import 'package:cs342_project/global.dart';
 import 'package:flutter/material.dart';
 
 class MainMask extends StatefulWidget {
@@ -21,8 +23,13 @@ class _MainMaskState extends State<MainMask> {
       appBar: AppBar(
         title: const Text("KU Dorm"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // automaticallyImplyLeading: false, (For Removing Back Button On AppBar)
-        // Remove // After The Logout Button Is Made And It Works Properly
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: _logOut, 
+            icon: const Icon(Icons.exit_to_app)
+          )
+        ],
       ),
 
       body: pageWidgets[pageIndex],
@@ -40,4 +47,10 @@ class _MainMaskState extends State<MainMask> {
       )
     );
   }
+
+  void _logOut() async {
+    if (currentUser != null) { await AuthenticationDatabase.logOutUser(); }
+    setState(() { Navigator.pop(context); });
+  }
+
 }
