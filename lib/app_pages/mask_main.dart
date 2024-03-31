@@ -2,6 +2,8 @@ import 'package:cs342_project/app_pages/page_account.dart';
 import 'package:cs342_project/app_pages/page_discovery.dart';
 import 'package:cs342_project/app_pages/page_search.dart';
 import 'package:cs342_project/constants.dart';
+import 'package:cs342_project/database/firebase_auth.dart';
+import 'package:cs342_project/global.dart';
 import 'package:flutter/material.dart';
 
 class MainMask extends StatefulWidget {
@@ -15,14 +17,22 @@ class _MainMaskState extends State<MainMask> {
   int pageIndex = 0;
   List<Widget> pageWidgets = const [DiscoveryPage(), SearchPage(), AccountPage()];
 
+  bool _isLogOut = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("KU Dorm"),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // automaticallyImplyLeading: false, (For Removing Back Button On AppBar)
-        // Remove // After The Logout Button Is Made And It Works Properly
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: _logOut, 
+            icon: const Icon(Icons.exit_to_app, size: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+          )
+        ],
       ),
 
       body: pageWidgets[pageIndex],
@@ -40,4 +50,45 @@ class _MainMaskState extends State<MainMask> {
       )
     );
   }
+
+  void _logOut() async {
+    if (currentUser != null) { 
+      _isLogOut = false;
+      await showDialog(
+        context: context, 
+        builder: (context) => AlertDialog(
+          content: const Text(
+            'Do you really want to log out?', 
+            style: TextStyle(fontSize: 20),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () { 
+                _isLogOut = true; 
+                Navigator.pop(context);
+              },
+              child: const Text('Yes')
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _isLogOut = false; 
+                Navigator.pop(context);
+              }, 
+              child: const Text('No')
+            )
+          ],
+          actionsAlignment: MainAxisAlignment.center,
+        )
+      );
+      if (_isLogOut) {
+        await AuthenticationDatabase.logOutUser(); 
+      }
+    } 
+    if (_isLogOut) { 
+      setState(() { 
+        Navigator.pop(context); 
+      }); 
+    }
+  }
+
 }
