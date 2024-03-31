@@ -17,27 +17,32 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Center(child: _profileBar(context)),
+      child: currentUser != null ?
+        _account() :
+        _toStartReview()
+    );
+  }
 
-            const SizedBox(height: 10),
+  Widget _account() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Center(child: _profileBar(context)),
 
-            const Text("Your Reviews", 
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold
-              ),
+          const SizedBox(height: 10),
+
+          const Text("Your Reviews", 
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold
             ),
+          ),
 
-            Center(child: _yourReviews())
-          ],
-        ),
-      )
+          Center(child: _yourReviews())
+        ],
+      ),
     );
   }
 
@@ -56,27 +61,31 @@ class _AccountPageState extends State<AccountPage> {
 
             const SizedBox(width: 10),
 
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("Hello, ${currentAppUser!.username}!", 
-                  style: const TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold
-                  ),
-                ),
-                greenButton("Edit Profile", 
-                  () => Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const EditProfilePage())
-                  )
-                )
-              ],
-            )
+            _rightBar()
           ],
         ),
       ),
+    );
+  }
+
+  Widget _rightBar() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text("Hello, ${currentAppUser!.username}!", 
+          style: const TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+        greenButton("Edit Profile", 
+          () => Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => const EditProfilePage())
+          )
+        )
+      ],
     );
   }
 
@@ -93,4 +102,22 @@ class _AccountPageState extends State<AccountPage> {
       ),
     );
   }
+
+  Widget _toStartReview() {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            'To start reviewing, please log into your account.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 25),
+          ),
+          greenButton('Login / Register', () => Navigator.pop(context))
+        ],
+      ),
+    );
+  }
+
 }
