@@ -51,7 +51,7 @@ class _AccountPageState extends State<AccountPage> {
           children: <Widget>[
             CircleAvatar(
               maxRadius: 40,
-              backgroundImage: profileImage,
+              backgroundImage: currentAppUser!.getProfileImage(),
             ),
 
             const SizedBox(width: 10),

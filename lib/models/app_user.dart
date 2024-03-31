@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class AppUser {
@@ -16,6 +17,12 @@ class AppUser {
     required this.password,
     required this.profileImageURL,
   });
+
+  ImageProvider<Object> getProfileImage() {
+    if (profileImageURL == '') {
+      return const NetworkImage(defaultPictureProfileLink);
+    } return NetworkImage(profileImageURL);
+  }
 
   factory AppUser.fromFirestore(Map<String, dynamic> map) {
     return AppUser(

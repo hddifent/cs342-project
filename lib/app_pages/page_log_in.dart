@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cs342_project/database/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/green_button.dart';
@@ -6,10 +6,7 @@ import '../widgets/loading.dart';
 import '../widgets/text_button.dart';
 import '../widgets/text_field_icon.dart';
 import '../widgets/welcome_text.dart';
-import '../database/firestore.dart';
-import '../global.dart';
 import '../constants.dart';
-import '../models/app_user.dart';
 import 'mask_main.dart';
 import 'page_sign_up.dart';
 
@@ -121,7 +118,7 @@ class _LogInPageState extends State<LogInPage> {
     });
 
     if (_isLogInError) { return; }
-    final User? user = await _loginUser(email, password);
+    final User? user = await AuthenticationDatabase.loginUser(email, password);
     setState(() {
       if (user == null) {
         _isLogInError = true;
@@ -135,36 +132,14 @@ class _LogInPageState extends State<LogInPage> {
     }
   }
 
-  Future<User?>? _loginUser(String email, String password) async {
-    try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password
-      );
-      return credential.user;
-    } on FirebaseAuthException { return null; }
-  }
-
   void _pushPage(Widget page, User? user) async {
     primaryFocus!.unfocus();
 
     if (user != null) {
       setState(() => _isLoading = true);
-      final FirestoreDatabase userDB = FirestoreDatabase('users');
-      final userRef = userDB.getDocumentReference(user.uid);
-
-      await userRef.get().then(
-        (DocumentSnapshot doc) {
-          final userData = doc.data() as Map<String, dynamic>;
-
-          setState(() {
-            currentAppUser = AppUser.fromFirestore(userData);
-            currentUser = user;
-            currentUid = user.uid;
-          });
-        },
-        onError: (e) => throw e
-      );
+      
+      print('Prepare to log in');
+      await AuthenticationDatabase.loggingIn(user);
     }
 
     setState(() {

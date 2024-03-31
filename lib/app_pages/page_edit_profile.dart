@@ -1,10 +1,10 @@
-import "dart:io";
 import "package:cs342_project/app_pages/mask_main.dart";
 import "package:cs342_project/app_pages/page_sign_up.dart";
+import "package:cs342_project/database/firebase_auth.dart";
+import "package:cs342_project/database/firebase_storage.dart";
 import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/global.dart";
-import "package:cs342_project/models/app_user.dart";
-import "package:firebase_auth/firebase_auth.dart";
+import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:image_picker/image_picker.dart";
@@ -21,10 +21,11 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final FirestoreDatabase _userDB = FirestoreDatabase('users');
+  late final StorageDatabase _storageDB;
 
-  late TextEditingController _firstNameController;
-  late TextEditingController _lastNameController;
-  late TextEditingController _usernameController;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
+  late final TextEditingController _usernameController;
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -38,12 +39,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _changePasswordErrorText = 'Change Password';
 
   bool _isSaveChangesError = false, _isSaveChangesSuccess = false,
-    _isChangePasswordError = false, _isWeakPassword = false,
-    _isChangePasswordSuccess = false;
+    _isChangePasswordError = false, _isChangePasswordSuccess = false;
 
   @override
   void initState() {
     super.initState();
+
+    _storageDB = StorageDatabase('profileImages');
 
     _firstNameController = TextEditingController(text: _firstNameText);
     _lastNameController = TextEditingController(text: _lastNameText);
@@ -190,14 +192,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _profileImage() {
     return CircleAvatar(
       maxRadius: 100,
-      backgroundImage: profileImage,
+      backgroundImage: currentAppUser!.getProfileImage(),
       child: Container(
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-              onPressed: () => takePicture(false),
+              onPressed: () => takePicture(ImageSource.gallery),
               icon: const Icon(Icons.image),
               iconSize: 40,
               style: const ButtonStyle(
@@ -207,7 +209,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             
             IconButton(
-              onPressed: () => takePicture(true),
+              onPressed: () => takePicture(ImageSource.camera),
               icon: const Icon(Icons.camera_alt_rounded),
               iconSize: 40,
               style: const ButtonStyle(
@@ -221,23 +223,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Future takePicture(bool fromCamera) async {
+  Future takePicture(ImageSource source) async {
     try {
-      XFile? image;
-      if (fromCamera) { 
-        image = await ImagePicker().pickImage(source: ImageSource.camera); 
-      } else {
-        image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      }
+      XFile? image = await ImagePicker().pickImage(source: source);
 
       if (image == null) { return; }
 
+      Uint8List imageFile = await image.readAsBytes();
+
+      String? imageURL = await _storageDB.saveImage(currentUser!.uid, imageFile);
+
       setState(() {
-        profileImage = FileImage(File(image!.path)) as ImageProvider<Object>;
+        currentAppUser!.profileImageURL = imageURL!;
       });
-    } on PlatformException {
-      rethrow;
-    } 
+
+      await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
+      setState(() {});
+    } on PlatformException { rethrow; }
+    on FirebaseException { rethrow; } 
   }
   
   void _saveChangesValidation() async {
@@ -245,7 +248,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _lastNameController.text.capitalize() == _lastNameText &&
       _usernameController.text.toLowerCase() == _usernameText) 
     {
-      _setTextFields();
+      _setDescriptionTextFields();
       return;
     }
     if (_isSaveChangesError) { return; }
@@ -256,7 +259,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (_firstNameController.text.isEmpty ||
         _lastNameController.text.isEmpty ||
         _usernameController.text.isEmpty) {
-        _setTextFields();
+        _setDescriptionTextFields();
         
         _isSaveChangesError = true;
         _saveChangesErrorText = 'Please fill the blanks';
@@ -269,26 +272,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _lastNameText = _lastNameController.text.capitalize();
         _usernameText = _usernameController.text.toLowerCase();
 
-        currentAppUser = AppUser(
-          email: currentAppUser!.email, 
-          firstName: _firstNameText, 
-          lastName: _lastNameText, 
-          username: _usernameText, 
-          password: currentAppUser!.password, 
-          profileImageURL: currentAppUser!.profileImageURL
-        );
+        currentAppUser!.firstName = _firstNameText;
+        currentAppUser!.lastName = _lastNameText;
+        currentAppUser!.username = _usernameText;
         
         _isSaveChangesSuccess = true;
         _saveChangesErrorText = 'Successfully Changed';
       });
 
-      _setTextFields();
+      _setDescriptionTextFields();
 
-      await _userDB.updateDocument(currentUid!, currentAppUser!.toFirestore());
+      await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
     }
   }
 
-  void _setTextFields() {
+  void _setDescriptionTextFields() {
     setState(() {
       _firstNameController.text = _firstNameText;
       _lastNameController.text = _lastNameText;
@@ -315,31 +313,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     });
 
-    _isWeakPassword = false;
-    await _changePassword();
+    String? result = await AuthenticationDatabase.changePassword(_newPasswordController.text);
     setState(() {
-      if (_isWeakPassword) {
+      if (result == 'weak-password') {
         _isChangePasswordError = true;
+        //FIXME
         _changePasswordErrorText = 'Password should be \nat least 6 letters';
       }
     });
 
     if (!_isChangePasswordError) {
       setState(() {
-        currentAppUser = AppUser(
-          email: currentAppUser!.email, 
-          firstName: currentAppUser!.firstName, 
-          lastName: currentAppUser!.lastName, 
-          username: currentAppUser!.username, 
-          password: _newPasswordController.text, 
-          profileImageURL: currentAppUser!.profileImageURL
-        );
+        currentAppUser!.password = _newPasswordController.text;
 
         _isChangePasswordSuccess = true;
         _changePasswordErrorText = 'Successfully Changed';
       });
 
-      await _userDB.updateDocument(currentUid!, currentAppUser!.toFirestore());
+      await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
     }
 
     setState(() {
@@ -347,16 +338,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _newPasswordController.clear();
       _confirmPasswordController.clear();
     });
-  }
-
-  Future<void> _changePassword() async {
-    try {
-      await currentUser!.updatePassword(_newPasswordController.text);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        _isWeakPassword = true;
-      }
-    }
   }
 
 }
