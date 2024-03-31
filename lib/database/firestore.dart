@@ -20,4 +20,8 @@ class FirestoreDatabase {
 
   DocumentReference getDocumentReference(String docID) { return collection.doc(docID); }
 
+  Future<void> updateDocument(String docID, Map<String, dynamic> data) {
+    return collection.doc(docID).update(data); 
+  }
+
 }
