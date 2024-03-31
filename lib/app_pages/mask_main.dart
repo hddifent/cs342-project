@@ -27,7 +27,8 @@ class _MainMaskState extends State<MainMask> {
         actions: [
           IconButton(
             onPressed: _logOut, 
-            icon: const Icon(Icons.exit_to_app)
+            icon: const Icon(Icons.exit_to_app, size: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
           )
         ],
       ),
