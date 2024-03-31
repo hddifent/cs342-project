@@ -1,4 +1,6 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cs342_project/constants.dart";
+import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/widgets/dorm_card.dart";
 import "package:flutter/material.dart";
@@ -75,10 +77,31 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _dormList() {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[]
-      )
+    FirestoreDatabase db = FirestoreDatabase("dorms");
+    return StreamBuilder<QuerySnapshot>(
+      stream: db.getStream("name"),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<QueryDocumentSnapshot<Object?>> dormDocList = snapshot.data?.docs ?? [];
+          List<Widget> dormCardList = [];
+
+          for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            Dorm dorm = Dorm.fromFirestore(data);
+
+            dormCardList.add(DormCard(dorm: dorm));
+          }
+
+          return Expanded(
+            child: SingleChildScrollView(
+              child: Column(children: dormCardList)
+            ),
+          );
+        }
+        else {
+          return const Text("No Dorm in database...");
+        }
+      },
     );
   }
 }

@@ -5,7 +5,7 @@ class Dorm {
   final String dormDescription;
   final GeoPoint geoLocation;
   final String location;
-  final double monthlyPrice;
+  final int monthlyPrice;
   final Map<String, dynamic> contactInfo;
 
   const Dorm({
