@@ -84,13 +84,8 @@ class _AccountPageState extends State<AccountPage> {
     // TODO: This Is Also Placeholder, Adjust This Later
     return SingleChildScrollView(
       child: Column(
-        children: <Widget>[
-          const DormCard(
-            dorm: Dorm(dormName: "KU Home", dormDescription: "Right there, inside the university. You can't get any better than this."),
-            isSpecify: true,
-          )
-        ],
-      ),
+        children: <Widget>[]
+      )
     );
   }
 }

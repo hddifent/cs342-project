@@ -77,11 +77,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget _dormList() {
     return SingleChildScrollView(
       child: Column(
-        children: <Widget>[
-          const DormCard(
-            dorm: Dorm(dormName: "KU Home", dormDescription: "Right there, inside the university. You can't get any better than this."),
-          )
-        ],
+        children: <Widget>[]
       )
     );
   }
