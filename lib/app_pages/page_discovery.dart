@@ -21,6 +21,7 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
 
   final TextEditingController _searchController = TextEditingController();
 
+  String _searchTerm = "";
   Dorm? selectedDorm;
 
   @override
@@ -66,8 +67,17 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
             padding: const EdgeInsets.all(10),
             child: TextFieldWithIcon(
               prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchTerm.isEmpty ? null : IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() => _searchTerm = _searchController.text);
+                }
+              ),
               prompt: "Search Dorm...",
-              controller: _searchController
+              controller: _searchController,
+
+              onChanged: (value) => setState(() => _searchTerm = value),
             )
           )
         ]
@@ -89,7 +99,7 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
     Set<Marker> markers = { };
 
     FirestoreDatabase db = FirestoreDatabase("dorms");
-    db.collection.get().then((dormCollection) {
+    await db.collection.get().then((dormCollection) {
       if (dormCollection.docs.isNotEmpty) {
         for (QueryDocumentSnapshot<Object?> doc in dormCollection.docs) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;

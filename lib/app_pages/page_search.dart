@@ -45,17 +45,19 @@ class _SearchPageState extends State<SearchPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: TextFieldWithIcon(
-              prefixIcon: const Icon(Icons.search),
-              prompt: "Search Dorm...",
-              controller: _searchController,
-
-              onChanged: (value) {
+          TextFieldWithIcon(
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: _searchTerm.isEmpty ? null : IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                _searchController.clear();
                 setState(() => _searchTerm = _searchController.text);
-              },
-            )
+              }
+            ),
+            prompt: "Search Dorm...",
+            controller: _searchController,
+          
+            onChanged: (value) => setState(() => _searchTerm = value),
           ),
 
           Padding(

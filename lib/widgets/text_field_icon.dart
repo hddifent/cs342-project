@@ -3,7 +3,8 @@ import '../constants.dart';
 
 class TextFieldWithIcon extends StatelessWidget {
   final TextEditingController controller;
-  final Icon prefixIcon;
+  final Widget prefixIcon;
+  final Widget? suffixIcon;
   final bool isObsecured;
   final TextInputType textInputType;
   final Function(String)? onChanged;
@@ -15,6 +16,7 @@ class TextFieldWithIcon extends StatelessWidget {
   const TextFieldWithIcon({super.key, 
     required this.controller, 
     required this.prefixIcon,
+    this.suffixIcon,
     this.isObsecured = false,
     this.textInputType =  TextInputType.text,
     this.onChanged,
@@ -54,6 +56,7 @@ class TextFieldWithIcon extends StatelessWidget {
                   style: _textStyle(),
                   decoration: InputDecoration(
                     prefixIcon: prefixIcon,
+                    suffixIcon: suffixIcon,
                     prefixIconColor: _colorLogic(),
                     hintText: prompt,
                     hintStyle: _textStyle(),
