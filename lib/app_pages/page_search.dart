@@ -97,12 +97,14 @@ class _SearchPageState extends State<SearchPage> {
           List<Dorm> dormList = [];
           List<Widget> dormCardList = [];
 
+          // Get dorm from DB
           for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
             Dorm dorm = Dorm.fromFirestore(data);
             dormList.add(dorm);
           }
 
+          // Sort
           if (sortType == 0) {
             dormList.sort((a, b) => a.dormName.compareTo(b.dormName));
           }
@@ -133,6 +135,7 @@ class _SearchPageState extends State<SearchPage> {
             dormList.sort((a, b) => a.dormName.compareTo(b.dormName));
           }
 
+          // Add DormCard
           for (Dorm d in dormList) {
             dormCardList.add(DormCard(dorm: d));
           }

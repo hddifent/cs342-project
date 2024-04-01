@@ -22,7 +22,7 @@ class _DormInfoMaskState extends State<DormInfoMask> {
   @override
   void initState() {
     super.initState();
-    _pageWidgets = [DormInfoPage(dorm: widget.dorm), DormReviewPage()];
+    _pageWidgets = [DormInfoPage(dorm: widget.dorm), DormReviewPage(dorm: widget.dorm)];
     setState(() {
       _loading = false;
     });
@@ -36,7 +36,16 @@ class _DormInfoMaskState extends State<DormInfoMask> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary
       ),
 
-      body: _pageWidgets[_pageIndex],
+      body: Column(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 2,
+            child: Image.asset("assets/dorm_placeholder.jpg", fit: BoxFit.cover)
+          ),
+
+          Expanded(child: _pageWidgets[_pageIndex])
+        ],
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _pageIndex,
