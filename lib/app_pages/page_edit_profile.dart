@@ -1,9 +1,9 @@
 import "package:cs342_project/app_pages/mask_main.dart";
-import "package:cs342_project/app_pages/page_sign_up.dart";
 import "package:cs342_project/database/firebase_auth.dart";
 import "package:cs342_project/database/firebase_storage.dart";
 import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/global.dart";
+import "package:cs342_project/utils/string_extension.dart";
 import "package:cs342_project/widgets/loading.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";

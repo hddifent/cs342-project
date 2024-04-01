@@ -3,8 +3,6 @@ import "package:cs342_project/widgets/green_button.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart" show timeDilation;
 import "../global.dart";
-import "../models/dorm.dart";
-import "../widgets/dorm_card.dart";
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});

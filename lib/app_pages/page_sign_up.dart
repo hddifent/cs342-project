@@ -1,5 +1,6 @@
 import 'package:cs342_project/database/firebase_auth.dart';
 import 'package:cs342_project/models/app_user.dart';
+import 'package:cs342_project/utils/string_extension.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../widgets/loading.dart';
@@ -235,10 +236,4 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-}
-
-extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
-  }
 }
