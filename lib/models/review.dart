@@ -24,21 +24,21 @@ class Review {
   });
 
   double getOverallRating() {
-    return (priceRating + hygieneRating + serviceRating + travelingRating)/4.0;
+    return (priceRating + hygieneRating + serviceRating + travelingRating) / 4.0;
   }
 
   double getHelpfulRatio() {
-    return helpfulRatedNumber/ratedNumber.toDouble();
+    return helpfulRatedNumber / ratedNumber.toDouble();
   }
 
   factory Review.fromFirestore(Map<String, dynamic> map) {
     return Review(
       userID: map['userID'],
-      dormID: map['dormID'], 
-      priceRating: map['priceRating'], 
-      hygieneRating: map['hygieneRating'], 
-      serviceRating: map['serviceRating'], 
-      travelingRating: map['travelingRating'], 
+      dormID: map['dormID'],
+      priceRating: map['priceRating'],
+      hygieneRating: map['hygieneRating'],
+      serviceRating: map['serviceRating'],
+      travelingRating: map['travelingRating'],
       review: map['review'],
       helpfulRatedNumber: map['helpfulRatedNumber'],
       ratedNumber: map['ratedNumber']
