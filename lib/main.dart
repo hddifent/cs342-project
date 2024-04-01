@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppPalette.green),
         useMaterial3: true,
+        fontFamily: "Inter"
       ),
       home: const LogInPage(),
     );
