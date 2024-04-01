@@ -267,7 +267,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
   
   void _saveChangesValidation() async {
-    if (_firstNameController.text.capitalize() == _firstNameText &&
+    if (_firstNameController.text.isNotEmpty &&
+      _lastNameController.text.isNotEmpty &&
+      _usernameController.text.isNotEmpty &&
+      _firstNameController.text.capitalize() == _firstNameText &&
       _lastNameController.text.capitalize() == _lastNameText &&
       _usernameController.text.toLowerCase() == _usernameText) 
     {
