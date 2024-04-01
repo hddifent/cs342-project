@@ -4,13 +4,13 @@ import '../constants.dart';
 class TextFieldWithIcon extends StatelessWidget {
   final TextEditingController controller;
   final Icon prefixIcon;
-  final bool? isObsecured;
-  final TextInputType? textInputType;
+  final bool isObsecured;
+  final TextInputType textInputType;
   final Function(String)? onChanged;
   final String prompt;
-  final double? sizedBoxHeight;
-  final bool? isErrorLogic;
-  final bool? isSuccessLogic;
+  final double sizedBoxHeight;
+  final bool isErrorLogic;
+  final bool isSuccessLogic;
 
   const TextFieldWithIcon({super.key, 
     required this.controller, 
@@ -49,7 +49,7 @@ class TextFieldWithIcon extends StatelessWidget {
                 child: TextField(
                   onChanged: onChanged,
                   controller: controller,
-                  obscureText: isObsecured!,
+                  obscureText: isObsecured,
                   keyboardType: textInputType,
                   style: _textStyle(),
                   decoration: InputDecoration(
@@ -79,8 +79,8 @@ class TextFieldWithIcon extends StatelessWidget {
   }
 
   Color? _colorLogic() {
-    return isErrorLogic! ? 
+    return isErrorLogic ? 
       AppPalette.red : 
-      isSuccessLogic! ? AppPalette.darkGreen : null;
+      isSuccessLogic ? AppPalette.darkGreen : null;
   }
 }

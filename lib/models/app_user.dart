@@ -15,7 +15,7 @@ class AppUser {
     required this.lastName,
     required this.username,
     required this.password,
-    required this.profileImageURL,
+    this.profileImageURL = '',
   });
 
   ImageProvider<Object> getProfileImage() {
@@ -31,7 +31,7 @@ class AppUser {
       lastName: map['lastName'], 
       username: map['username'], 
       password: map['password'], 
-      profileImageURL: map['profileImageURL'] ?? defaultPictureProfileLink
+      profileImageURL: map['profileImageURL']
     );
   }
 

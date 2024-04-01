@@ -137,8 +137,6 @@ class _LogInPageState extends State<LogInPage> {
 
     if (user != null) {
       setState(() => _isLoading = true);
-      
-      print('Prepare to log in');
       await AuthenticationDatabase.loggingIn(user);
     }
 
@@ -170,7 +168,6 @@ class _LogInPageState extends State<LogInPage> {
         const Text('or'),
         
         textButton('browse as guest', Alignment.centerRight, 110,
-          //TODO: Add Logic For Guest
           () => _pushPage(const MainMask(), null)
         ),
 
