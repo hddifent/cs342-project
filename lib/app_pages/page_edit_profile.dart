@@ -65,11 +65,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.push(
+            Navigator.pushReplacement(
               context, 
-              MaterialPageRoute(builder: (context) => const MainMask())
+              MaterialPageRoute(
+                builder: (context) 
+                  => const MainMask(intialIndex: 2)
+              )
             );
           }, 
           icon: const Icon(Icons.arrow_back)

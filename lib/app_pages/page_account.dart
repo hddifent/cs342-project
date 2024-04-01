@@ -85,7 +85,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
         greenButton("Edit Profile", 
-          () => Navigator.push(
+          () => Navigator.pushReplacement(
             context, 
             MaterialPageRoute(builder: (context) => const EditProfilePage())
           )
