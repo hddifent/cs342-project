@@ -100,7 +100,7 @@ class _SearchPageState extends State<SearchPage> {
           // Get dorm from DB
           for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            Dorm dorm = Dorm.fromFirestore(data);
+            Dorm dorm = Dorm.fromFirestore(doc.id, data);
             dormList.add(dorm);
           }
 

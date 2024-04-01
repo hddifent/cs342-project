@@ -1,6 +1,8 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 
 class Dorm {
+  final String dormID;
+
   final String dormName;
   final String dormDescription;
   final GeoPoint geoLocation;
@@ -8,7 +10,7 @@ class Dorm {
   final int monthlyPrice;
   final Map<String, dynamic> contactInfo;
 
-  const Dorm({
+  const Dorm(this.dormID, {
     required this.dormName,
     required this.dormDescription,
     required this.geoLocation,
@@ -17,8 +19,8 @@ class Dorm {
     required this.contactInfo
   });
 
-  factory Dorm.fromFirestore(Map<String, dynamic> map) {
-    return Dorm(
+  factory Dorm.fromFirestore(String dormID, Map<String, dynamic> map) {
+    return Dorm(dormID,
       dormName: map["name"],
       dormDescription: map["description"],
       geoLocation: map["geoLocation"],

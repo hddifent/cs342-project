@@ -1,3 +1,4 @@
+import 'package:cs342_project/app_pages/page_write_review.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:cs342_project/models/dorm.dart';
 import 'package:cs342_project/widgets/green_button.dart';
@@ -16,7 +17,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +26,12 @@ class _DormReviewPageState extends State<DormReviewPage> {
             // TODO: Check for user review...
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("Your Review", style: AppTextStyle.heading1.merge(AppTextStyle.bold)), greenButton("Write", () { }, width: 100, icon: Icons.edit)]
+              children: [
+                Text("Your Review", 
+                  style: AppTextStyle.heading1.merge(AppTextStyle.bold)
+                ), 
+                greenButton("Write", _writeReview, width: 100, icon: Icons.edit)
+              ]
             ),
 
             const SizedBox(height: 10),
@@ -38,4 +44,17 @@ class _DormReviewPageState extends State<DormReviewPage> {
       )
     );
   }
+
+  void _writeReview() {
+    Navigator.push(context, 
+      MaterialPageRoute(
+        builder: (context) 
+          => WriteReviewPage(
+            dormName: widget.dorm.dormName,
+            dormID: widget.dorm.dormID,
+          )
+      )
+    );
+  }
+
 }
