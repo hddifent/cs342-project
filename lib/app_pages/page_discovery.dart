@@ -2,6 +2,7 @@ import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/utils/geolocator_locate.dart";
+import "package:cs342_project/widgets/dorm_card.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
@@ -16,6 +17,10 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
   bool _loading = true;
   LatLng _userLocation = const LatLng(0, 0);
   Set<Marker> _dormMarkers = { };
+
+  final TextEditingController _searchController = TextEditingController();
+
+  Dorm? selectedDorm;
 
   @override
   void initState() {
@@ -37,7 +42,16 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
             markers: _dormMarkers,
           ),
 
-          
+          selectedDorm == null ? const SizedBox(width: 0, height: 0) : Align(alignment: Alignment.bottomCenter, child: DormCard(dorm: selectedDorm!)),
+
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: SearchBar(
+              leading: const Icon(Icons.search),
+              hintText: "Search Dorm...",
+              controller: _searchController
+            )
+          )
         ]
       )
     );
@@ -66,7 +80,10 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
           markers.add(
             Marker(
               markerId: MarkerId(doc.id),
-              position: LatLng(dorm.geoLocation.latitude, dorm.geoLocation.longitude)
+              position: LatLng(dorm.geoLocation.latitude, dorm.geoLocation.longitude),
+              onTap: () => setState(() {
+                selectedDorm = dorm;
+              })
             )
           );
         }

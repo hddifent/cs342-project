@@ -20,7 +20,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   bool _loading = true;
   LatLng _userLocation = const LatLng(0, 0);
