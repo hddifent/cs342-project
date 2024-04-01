@@ -8,7 +8,7 @@ class DormCard extends StatelessWidget {
   static const double pictureRatio = 100.00/120.00;
 
   final Dorm? dorm;
-  final bool? isSpecify;
+  final bool isSpecify;
 
   const DormCard({super.key, this.dorm, this.isSpecify = false});
 
@@ -46,16 +46,16 @@ class DormCard extends StatelessWidget {
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: isSpecify! ? 
+                        children: isSpecify ? 
                         // Specify
                         <Widget>[
-                          _ratingDisplay(isSpecify!),
+                          _ratingDisplay(isSpecify),
                           _helpfulDisplay()
                         ]
                         // Overview
                         : <Widget>[
-                          _ratingDisplay(isSpecify!),
-                          const Text("฿25,300 / mth.", style: AppTextStyle.heading2)
+                          _ratingDisplay(isSpecify),
+                          Text("฿${dorm?.monthlyPrice ?? 0} / mth.", style: AppTextStyle.heading2)
                         ]
                       ),
 

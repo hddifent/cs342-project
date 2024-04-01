@@ -1,9 +1,8 @@
 import "package:cs342_project/app_pages/page_edit_profile.dart";
 import "package:cs342_project/widgets/green_button.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart" show timeDilation;
 import "../global.dart";
-import "../models/dorm.dart";
-import "../widgets/dorm_card.dart";
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -16,6 +15,7 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    timeDilation = 1.0;
     return Center(
       child: currentUser != null ?
         _account() :
@@ -54,9 +54,12 @@ class _AccountPageState extends State<AccountPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CircleAvatar(
-              maxRadius: 40,
-              backgroundImage: currentAppUser!.getProfileImage(),
+            Hero(
+              tag: 'profileAvatar',
+              child: CircleAvatar(
+                maxRadius: 40,
+                backgroundImage: currentAppUser!.getProfileImage(),
+              ),
             ),
 
             const SizedBox(width: 10),
@@ -80,7 +83,7 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ),
         greenButton("Edit Profile", 
-          () => Navigator.push(
+          () => Navigator.pushReplacement(
             context, 
             MaterialPageRoute(builder: (context) => const EditProfilePage())
           )
@@ -93,13 +96,8 @@ class _AccountPageState extends State<AccountPage> {
     // TODO: This Is Also Placeholder, Adjust This Later
     return SingleChildScrollView(
       child: Column(
-        children: <Widget>[
-          const DormCard(
-            dorm: Dorm(dormName: "KU Home", dormDescription: "Right there, inside the university. You can't get any better than this."),
-            isSpecify: true,
-          )
-        ],
-      ),
+        children: <Widget>[]
+      )
     );
   }
 

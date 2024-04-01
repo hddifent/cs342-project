@@ -7,17 +7,25 @@ import 'package:cs342_project/global.dart';
 import 'package:flutter/material.dart';
 
 class MainMask extends StatefulWidget {
-  const MainMask({super.key});
+  final int intialIndex;
+
+  const MainMask({super.key, this.intialIndex = 0});
 
   @override
   State<MainMask> createState() => _MainMaskState();
 }
 
 class _MainMaskState extends State<MainMask> {
-  int pageIndex = 0;
+  late int pageIndex;
   List<Widget> pageWidgets = const [DiscoveryPage(), SearchPage(), AccountPage()];
 
   bool _isLogOut = true;
+
+  @override
+  void initState() {
+    super.initState();
+    pageIndex = widget.intialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
