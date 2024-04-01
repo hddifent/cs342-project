@@ -25,10 +25,6 @@ Widget greenButton(String text, void Function()? function, {bool isDisabled = fa
 Text _getText(String text) {
   return Text(text,
     textAlign: TextAlign.center,
-    style: const TextStyle(
-      color: Colors.black,
-      fontSize: 20,
-      fontWeight: FontWeight.w400
-    )
+    style: AppTextStyle.heading1.merge(const TextStyle(color: Colors.black))
   );
 }

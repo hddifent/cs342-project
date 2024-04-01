@@ -58,33 +58,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     timeDilation = 1.0;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Profile"),
-        backgroundColor: AppPalette.green,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context, 
-              MaterialPageRoute(
-                builder: (context) 
-                  => const MainMask(intialIndex: 2)
-              )
-            );
-          }, 
-          icon: const Icon(Icons.arrow_back)
-        ),
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: _editProfile()
+    return PopScope(
+      canPop: false,
+      
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Edit Profile"),
+          backgroundColor: AppPalette.green,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) 
+                    => const MainMask(intialIndex: 2)
+                )
+              );
+            }, 
+            icon: const Icon(Icons.arrow_back)
           ),
-          loading(_isLoading)
-        ],
-      )
+        ),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: _editProfile()
+            ),
+            loading(_isLoading)
+          ],
+        )
+      ),
     );
   }
 
