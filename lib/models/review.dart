@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Review {
-  String ownerUsername;
-  String dormID;
-  int overallRating;
+  DocumentReference userID;
+  DocumentReference dormID;
   int priceRating;
   int hygieneRating;
   int serviceRating;
@@ -11,9 +12,8 @@ class Review {
   int ratedNumber;
 
   Review({
-    required this.ownerUsername,
+    required this.userID,
     required this.dormID,
-    required this.overallRating,
     required this.priceRating,
     required this.hygieneRating,
     required this.serviceRating,
@@ -23,15 +23,18 @@ class Review {
     this.ratedNumber = 0
   });
 
+  double getOverallRating() {
+    return (priceRating + hygieneRating + serviceRating + travelingRating)/4.0;
+  }
+
   double getHelpfulRatio() {
-    return helpfulRatedNumber/ratedNumber;
+    return helpfulRatedNumber/ratedNumber.toDouble();
   }
 
   factory Review.fromFirestore(Map<String, dynamic> map) {
     return Review(
-      ownerUsername: map['ownerUsername'],
+      userID: map['userID'],
       dormID: map['dormID'], 
-      overallRating: map['overallRating'], 
       priceRating: map['priceRating'], 
       hygieneRating: map['hygieneRating'], 
       serviceRating: map['serviceRating'], 
@@ -44,9 +47,8 @@ class Review {
 
   Map<String, dynamic> toFirestore() {
     return {
-      "ownerUsername": ownerUsername,
+      "userID": userID,
       "dormID": dormID,
-      "overallRating": overallRating,
       "priceRating": priceRating,
       "hygieneRating": hygieneRating,
       "serviceRating": serviceRating,
