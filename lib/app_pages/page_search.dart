@@ -26,6 +26,8 @@ class _SearchPageState extends State<SearchPage> {
   bool _loading = true;
   LatLng _userLocation = const LatLng(0, 0);
 
+  String _searchTerm = "";
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +50,11 @@ class _SearchPageState extends State<SearchPage> {
             child: TextFieldWithIcon(
               prefixIcon: const Icon(Icons.search),
               prompt: "Search Dorm...",
-              controller: _searchController
+              controller: _searchController,
+
+              onChanged: (value) {
+                setState(() => _searchTerm = _searchController.text);
+              },
             )
           ),
 
@@ -57,7 +63,7 @@ class _SearchPageState extends State<SearchPage> {
             child: _categoryTabBar()
           ),
 
-          _dormList(sortType)
+          _dormList(sortType, _searchTerm)
         ]
       )
     );
@@ -88,7 +94,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _dormList(int sortType) {
+  Widget _dormList(int sortType, String search) {
     FirestoreDatabase db = FirestoreDatabase("dorms");
     return StreamBuilder<QuerySnapshot>(
       stream: db.getStream("name"),
@@ -102,7 +108,14 @@ class _SearchPageState extends State<SearchPage> {
           for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
             Dorm dorm = Dorm.fromFirestore(doc.id, data);
-            dormList.add(dorm);
+
+            if (
+              search.isEmpty ||
+              dorm.dormName.toLowerCase().contains(search.toLowerCase()) ||
+              dorm.location.toLowerCase().contains(search.toLowerCase())
+            ) {
+              dormList.add(dorm);
+            }
           }
 
           // Sort
