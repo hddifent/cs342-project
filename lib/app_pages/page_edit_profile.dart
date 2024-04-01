@@ -4,8 +4,10 @@ import "package:cs342_project/database/firebase_auth.dart";
 import "package:cs342_project/database/firebase_storage.dart";
 import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/global.dart";
+import "package:cs342_project/widgets/loading.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart" show timeDilation;
 import "package:flutter/services.dart";
 import "package:image_picker/image_picker.dart";
 import "../constants.dart";
@@ -39,7 +41,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _changePasswordErrorText = 'Change Password';
 
   bool _isSaveChangesError = false, _isSaveChangesSuccess = false,
-    _isChangePasswordError = false, _isChangePasswordSuccess = false;
+    _isChangePasswordError = false, _isChangePasswordSuccess = false,
+    _isLoading = false;
 
   @override
   void initState() {
@@ -54,6 +57,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    timeDilation = 1.0;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Profile"),
@@ -61,7 +65,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed: () {
-            //FIXME
             Navigator.pop(context);
             Navigator.pop(context);
             Navigator.push(
@@ -72,9 +75,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
           icon: const Icon(Icons.arrow_back)
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: _editProfile()
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: _editProfile()
+          ),
+          loading(_isLoading)
+        ],
       )
     );
   }
@@ -190,36 +198,49 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _profileImage() {
-    return CircleAvatar(
-      maxRadius: 100,
-      backgroundImage: currentAppUser!.getProfileImage(),
-      child: Container(
-        alignment: Alignment.bottomCenter,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              onPressed: () => takePicture(ImageSource.gallery),
-              icon: const Icon(Icons.image),
-              iconSize: 40,
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(AppPalette.green),
-                elevation: MaterialStatePropertyAll(10)
-              ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Hero(
+          tag: 'profileAvatar',
+          child: CircleAvatar(
+            maxRadius: 100,
+            backgroundImage: currentAppUser!.getProfileImage(),
+            child: _imageButtons()
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _imageButtons() {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          IconButton(
+            onPressed: () => takePicture(ImageSource.gallery),
+            icon: const Icon(Icons.image),
+            iconSize: 40,
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(AppPalette.green),
+              elevation: MaterialStatePropertyAll(10)
             ),
-            
-            IconButton(
-              onPressed: () => takePicture(ImageSource.camera),
-              icon: const Icon(Icons.camera_alt_rounded),
-              iconSize: 40,
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(AppPalette.green),
-                elevation: MaterialStatePropertyAll(10)
-              ),
+          ),
+          
+          IconButton(
+            onPressed: () => takePicture(ImageSource.camera),
+            icon: const Icon(Icons.camera_alt_rounded),
+            iconSize: 40,
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(AppPalette.green),
+              elevation: MaterialStatePropertyAll(10)
             ),
-          ],
-        )
-      ),
+          ),
+        ],
+      )
     );
   }
 
@@ -234,10 +255,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
       String? imageURL = await _storageDB.saveImage(currentUser!.uid, imageFile);
 
       setState(() {
+        _isLoading = true;
         currentAppUser!.profileImageURL = imageURL!;
       });
 
       await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
+      setState(() => _isLoading = false);
     } on PlatformException { rethrow; }
     on FirebaseException { rethrow; } 
   }

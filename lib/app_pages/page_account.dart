@@ -1,6 +1,7 @@
 import "package:cs342_project/app_pages/page_edit_profile.dart";
 import "package:cs342_project/widgets/green_button.dart";
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart" show timeDilation;
 import "../global.dart";
 import "../models/dorm.dart";
 import "../widgets/dorm_card.dart";
@@ -16,6 +17,7 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    timeDilation = 1.0;
     return Center(
       child: currentUser != null ?
         _account() :
@@ -54,9 +56,12 @@ class _AccountPageState extends State<AccountPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CircleAvatar(
-              maxRadius: 40,
-              backgroundImage: currentAppUser!.getProfileImage(),
+            Hero(
+              tag: 'profileAvatar',
+              child: CircleAvatar(
+                maxRadius: 40,
+                backgroundImage: currentAppUser!.getProfileImage(),
+              ),
             ),
 
             const SizedBox(width: 10),
