@@ -152,6 +152,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void _getUserLocation() async {
     LatLng uLoc = await UserLocator.getUserLocation();
+    if (!mounted) { return; }
     setState(() {
       _userLocation = uLoc;
       _loading = false;
