@@ -159,13 +159,15 @@ class _LogInPageState extends State<LogInPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const Text('Don\'t have an account?'),
+        const Text('Don\'t have an account? '),
         
-        textButton('Sign Up', Alignment.center, 57.5,
+        textButton('Sign Up', Alignment.center, 59,
           () => _pushPage(const SignUpPage(), null)
         ),
 
         const Text('or'),
+
+        const SizedBox(width: 3),
         
         textButton('browse as guest', Alignment.centerRight, 110,
           () => _pushPage(const MainMask(), null)

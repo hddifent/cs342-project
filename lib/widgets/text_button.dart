@@ -10,6 +10,7 @@ Widget textButton(String text, Alignment alignment,
         style: const TextStyle(
           color: AppPalette.green,
           decoration: TextDecoration.underline,
+          decorationColor: AppPalette.green
         )
       ),
       MaterialButton(
