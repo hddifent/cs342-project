@@ -238,7 +238,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
 
       await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
-      setState(() {});
     } on PlatformException { rethrow; }
     on FirebaseException { rethrow; } 
   }
