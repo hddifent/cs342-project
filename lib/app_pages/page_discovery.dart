@@ -3,6 +3,7 @@ import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/utils/geolocator_locate.dart";
 import "package:cs342_project/widgets/dorm_card.dart";
+import "package:cs342_project/widgets/text_field_icon.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
@@ -37,18 +38,35 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
               target: _userLocation,
-              zoom: 12.5
+              zoom: 14
             ),
             markers: _dormMarkers,
           ),
 
-          selectedDorm == null ? const SizedBox(width: 0, height: 0) : Align(alignment: Alignment.bottomCenter, child: DormCard(dorm: selectedDorm!)),
+          selectedDorm == null ? const SizedBox(width: 0, height: 0) : Padding(
+            padding: const EdgeInsets.all(10),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton.icon(
+                    onPressed: () => setState(() => selectedDorm = null),
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    label: const Text("Hide")
+                  ),
+                  DormCard(dorm: selectedDorm!)
+                ]
+              )
+            )
+          ),
 
           Padding(
             padding: const EdgeInsets.all(10),
-            child: SearchBar(
-              leading: const Icon(Icons.search),
-              hintText: "Search Dorm...",
+            child: TextFieldWithIcon(
+              prefixIcon: const Icon(Icons.search),
+              prompt: "Search Dorm...",
               controller: _searchController
             )
           )

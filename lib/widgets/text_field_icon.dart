@@ -40,7 +40,7 @@ class TextFieldWithIcon extends StatelessWidget {
               child: SizedBox(height: 60, width: 500)
             ),
             ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(25)),
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
               child: Container(
                 height: 60,
                 color: Colors.white,

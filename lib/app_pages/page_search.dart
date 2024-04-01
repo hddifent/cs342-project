@@ -6,6 +6,7 @@ import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/utils/geolocator_locate.dart";
 import "package:cs342_project/widgets/dorm_card.dart";
+import "package:cs342_project/widgets/text_field_icon.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
@@ -44,9 +45,9 @@ class _SearchPageState extends State<SearchPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SearchBar(
-              leading: const Icon(Icons.search),
-              hintText: "Search Dorm...",
+            child: TextFieldWithIcon(
+              prefixIcon: const Icon(Icons.search),
+              prompt: "Search Dorm...",
               controller: _searchController
             )
           ),
