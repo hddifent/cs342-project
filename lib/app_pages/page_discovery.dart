@@ -75,7 +75,7 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
       if (dormCollection.docs.isNotEmpty) {
         for (QueryDocumentSnapshot<Object?> doc in dormCollection.docs) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          Dorm dorm = Dorm.fromFirestore(data);
+          Dorm dorm = Dorm.fromFirestore(doc.id, data);
 
           markers.add(
             Marker(

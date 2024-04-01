@@ -177,6 +177,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
 
       setState(() {
         _reviewController.clear();
+        Navigator.pop(context);
       });      
     }
   }
