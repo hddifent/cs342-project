@@ -1,3 +1,4 @@
+import "package:cs342_project/app_pages/mask_dorm_info.dart";
 import "package:cs342_project/constants.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:flutter/material.dart";
@@ -7,15 +8,15 @@ class DormCard extends StatelessWidget {
   static const double _roundRadius = 10;
   static const double pictureRatio = 100.00/120.00;
 
-  final Dorm? dorm;
+  final Dorm dorm;
   final bool isSpecify;
 
-  const DormCard({super.key, this.dorm, this.isSpecify = false});
+  const DormCard({super.key, required this.dorm, this.isSpecify = false});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DormInfoMask(dorm: dorm))),
 
       child: SizedBox(
         height: 140,
@@ -42,7 +43,7 @@ class DormCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(dorm?.dormName ?? "[Dorm Name]", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
+                      Text(dorm.dormName, style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,13 +56,13 @@ class DormCard extends StatelessWidget {
                         // Overview
                         : <Widget>[
                           _ratingDisplay(isSpecify),
-                          Text("฿${dorm?.monthlyPrice ?? 0} / mth.", style: AppTextStyle.heading2)
+                          Text("฿${dorm.monthlyPrice} / mth.", style: AppTextStyle.heading2)
                         ]
                       ),
 
                       Expanded(
                         child: Text(
-                          dorm?.dormDescription ?? lorem,
+                          dorm.dormDescription,
                           style: AppTextStyle.body,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
