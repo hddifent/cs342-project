@@ -9,7 +9,7 @@ Widget welcomeText() {
           fontSize: 20,
         ),
       ),
-      Text('KU DORM',
+      Text('KU Dorm',
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold

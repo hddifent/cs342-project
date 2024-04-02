@@ -96,7 +96,8 @@ class _LogInPageState extends State<LogInPage> {
         ),
     
         const SizedBox(height: 20),
-    
+
+        const Text('Don\'t have an account?'),
         _dontHaveAnAccount()
       ],
     );
@@ -159,17 +160,13 @@ class _LogInPageState extends State<LogInPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const Text('Don\'t have an account? '),
-        
-        textButton('Sign Up', Alignment.center, 59,
+        textButton('Sign up', Alignment.center, 60,
           () => _pushPage(const SignUpPage(), null)
         ),
 
-        const Text('or'),
-
-        const SizedBox(width: 3),
+        const Text(' or '),
         
-        textButton('browse as guest', Alignment.centerRight, 110,
+        textButton('browse as guest', Alignment.centerRight, 116,
           () => _pushPage(const MainMask(), null)
         ),
 
