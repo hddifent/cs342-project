@@ -97,11 +97,26 @@ class DormCard extends StatelessWidget {
         children: starIcon
       );
     }
-    return const Row(
-      children: <Widget>[
-        Text("4.8", style: AppTextStyle.heading2),
-        Icon(Icons.star_rounded, color: AppPalette.gold)
-      ]
+    return FutureBuilder(
+      future: dorm.getRating(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Row(
+            children: <Widget>[
+              Text(snapshot.data!.toStringAsFixed(1), style: AppTextStyle.heading2),
+              const Icon(Icons.star_rounded, color: AppPalette.gold)
+            ]
+          );
+        }
+        else {
+          return const Row(
+            children: <Widget>[
+              Text("???", style: AppTextStyle.heading2),
+              Icon(Icons.star_rounded, color: AppPalette.gold)
+            ]
+          );
+        }
+      },
     );
   }
 
