@@ -4,6 +4,7 @@ import "package:cs342_project/constants.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/models/review.dart";
 import "package:flutter/material.dart";
+import "package:flutter_rating_bar/flutter_rating_bar.dart";
 
 import "../models/app_user.dart";
 
@@ -65,8 +66,7 @@ class DormCard extends StatelessWidget {
                         children: isReview ? 
                         // Specify
                         <Widget>[
-                          _ratingDisplay(),
-                          _helpfulDisplay()
+                          _userRatingDisplay()
                         ]
                         // Overview
                         : <Widget>[
@@ -95,23 +95,6 @@ class DormCard extends StatelessWidget {
   }
 
   Widget _ratingDisplay() {
-    // TODO: Actually display the rating.
-    List<Icon> starIcon = [];
-    for (int i = 0; i < (4.8).ceil(); i++) {
-      starIcon.add(
-        const Icon(
-          Icons.star_rounded, 
-          color: AppPalette.gold,
-        )
-      );
-    } 
-    if (isReview) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: starIcon
-      );
-    }
     return Row(
       children: <Widget>[
         Text(dorm.rating.toStringAsFixed(1), style: AppTextStyle.heading2),
@@ -120,15 +103,24 @@ class DormCard extends StatelessWidget {
     );
   }
 
-  Widget _helpfulDisplay() {
-    // TODO: Actually display the helpful.
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        Text('91.2% ', style: AppTextStyle.heading2),
-        Text('(498) ', style: AppTextStyle.heading2),
-        Icon(Icons.thumb_up, color: AppPalette.darkGreen)
-      ]
+  Widget _userRatingDisplay() {
+    return RatingBar.builder( 
+      allowHalfRating: true,
+      ignoreGestures: true,
+      glow: false,
+      tapOnlyMode: true,
+      updateOnDrag: false,
+      direction: Axis.horizontal,
+      minRating: 1,
+      maxRating: 5,
+      initialRating: review!.getOverallRating(),
+      itemSize: 24,
+      itemCount: 5,
+      itemBuilder: (context, _)
+        => const Icon(Icons.star_rounded, color: AppPalette.gold), 
+      onRatingUpdate: (rating) {
+        rating = review!.getOverallRating();
+      }
     );
   }
 }

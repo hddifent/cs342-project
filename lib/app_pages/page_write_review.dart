@@ -95,7 +95,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             direction: Axis.horizontal,
             minRating: 1,
             maxRating: 5,
-            itemSize: 27.5,
+            itemSize: 30,
             itemCount: 5,
             itemBuilder: (context, _) 
               => const Icon(Icons.star_rounded,

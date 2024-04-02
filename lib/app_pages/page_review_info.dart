@@ -98,7 +98,7 @@ class ReviewInfoPage extends StatelessWidget {
             minRating: 1,
             maxRating: 5,
             initialRating: rating.toDouble(),
-            itemSize: 27.5,
+            itemSize: 30,
             itemCount: 5,
             itemBuilder: (context, _) 
               => const Icon(Icons.star_rounded,

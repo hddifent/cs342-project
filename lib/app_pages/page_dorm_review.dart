@@ -43,6 +43,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
             child: Align(
               alignment: Alignment.topLeft,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   currentUser == null ? const SizedBox(height: 0) : _getYourReview(),
                   currentUser == null ? const SizedBox(height: 0) : const SizedBox(height: 10),
