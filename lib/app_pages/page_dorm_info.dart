@@ -1,6 +1,7 @@
 import 'package:cs342_project/constants.dart';
 import 'package:cs342_project/models/dorm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class DormInfoPage extends StatelessWidget {
   final Dorm dorm;
@@ -17,20 +18,20 @@ class DormInfoPage extends StatelessWidget {
         
           children: <Widget>[
             Text(dorm.dormName, style: AppTextStyle.title),
-            Row(children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               const Icon(Icons.location_pin), 
               const SizedBox(width: 5), 
-              Text(dorm.location, style: AppTextStyle.heading2)]
+              Flexible(child: Text(dorm.location, style: AppTextStyle.heading2))]
             ),
-            Row(children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               const Icon(Icons.mail), 
               const SizedBox(width: 5), 
-              Text(dorm.contactInfo["email"], style: AppTextStyle.heading2)]
+              Flexible(child: Text(dorm.contactInfo["email"], style: AppTextStyle.heading2))]
             ),
-            Row(children: <Widget>[
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
               const Icon(Icons.phone), 
               const SizedBox(width: 5), 
-              Text(dorm.contactInfo["phoneNumber"], style: AppTextStyle.heading2)]
+              Flexible(child: Text(dorm.contactInfo["phoneNumber"], style: AppTextStyle.heading2))]
             ),
                     
             const SizedBox(height: 10),
