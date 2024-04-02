@@ -10,6 +10,7 @@ class Review {
   String review;
   int helpfulRatedNumber;
   int ratedNumber;
+  Timestamp postTimestamp;
 
   Review({
     required this.userID,
@@ -20,7 +21,8 @@ class Review {
     required this.travelingRating,
     required this.review,
     this.helpfulRatedNumber = 0,
-    this.ratedNumber = 0
+    this.ratedNumber = 0,
+    required this.postTimestamp
   });
 
   double getOverallRating() {
@@ -41,7 +43,8 @@ class Review {
       travelingRating: map['travelingRating'],
       review: map['review'],
       helpfulRatedNumber: map['helpfulRatedNumber'],
-      ratedNumber: map['ratedNumber']
+      ratedNumber: map['ratedNumber'],
+      postTimestamp: map['postTimestamp']
     );
   }
 
@@ -55,7 +58,8 @@ class Review {
       "travelingRating": travelingRating,
       "review": review,
       "helpfulRatedNumber": helpfulRatedNumber,
-      "ratedNumber": ratedNumber
+      "ratedNumber": ratedNumber,
+      "postTImestamp": postTimestamp
     };
   }
 

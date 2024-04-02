@@ -1,6 +1,7 @@
 import "package:cs342_project/app_pages/mask_dorm_info.dart";
 import "package:cs342_project/constants.dart";
 import "package:cs342_project/models/dorm.dart";
+import "package:cs342_project/models/review.dart";
 import "package:flutter/material.dart";
 
 // TODO: This is a placeholder. Don't forget to adjust this widget later.
@@ -9,9 +10,12 @@ class DormCard extends StatelessWidget {
   static const double pictureRatio = 100.00/120.00;
 
   final Dorm dorm;
-  final bool isSpecify;
+  final bool isReview;
+  final Review? review;
 
-  const DormCard({super.key, required this.dorm, this.isSpecify = false});
+  const DormCard({
+    super.key, required this.dorm, this.isReview = false, this.review
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,22 +51,22 @@ class DormCard extends StatelessWidget {
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: isSpecify ? 
+                        children: isReview ? 
                         // Specify
                         <Widget>[
-                          _ratingDisplay(isSpecify),
+                          _ratingDisplay(),
                           _helpfulDisplay()
                         ]
                         // Overview
                         : <Widget>[
-                          _ratingDisplay(isSpecify),
+                          _ratingDisplay(),
                           Text("฿${dorm.monthlyPrice} / mth.", style: AppTextStyle.heading2)
                         ]
                       ),
 
                       Expanded(
                         child: Text(
-                          dorm.dormDescription,
+                          isReview ? dorm.dormDescription : review!.review,
                           style: AppTextStyle.body,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
@@ -79,7 +83,7 @@ class DormCard extends StatelessWidget {
     );
   }
 
-  Widget _ratingDisplay(bool isSpecify) {
+  Widget _ratingDisplay() {
     // TODO: Actually display the rating.
     List<Icon> starIcon = [];
     for (int i = 0; i < (4.8).ceil(); i++) {
@@ -90,7 +94,7 @@ class DormCard extends StatelessWidget {
         )
       );
     } 
-    if (isSpecify) {
+    if (isReview) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,

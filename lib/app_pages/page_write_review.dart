@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:cs342_project/database/firestore.dart';
 import 'package:cs342_project/global.dart';
@@ -170,7 +171,8 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         hygieneRating: _hygieneRating, 
         serviceRating: _serviceRating, 
         travelingRating: _travelingRating, 
-        review: _reviewController.text
+        review: _reviewController.text,
+        postTimestamp: Timestamp.now()
       );
 
       await _reviewDB.addDocument(null, newReview.toFirestore());
