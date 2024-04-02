@@ -37,7 +37,7 @@ class DormCard extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: pictureRatio,
                   child: dorm.imagePath.isNotEmpty ? Image.network(dorm.imagePath[0], fit: BoxFit.cover)
-                                                   : Image.asset("assets/dorm_placeholder.jpg", fit: BoxFit.cover)
+                                                   : Image.asset("assets/dorm_placeholder.png", fit: BoxFit.cover)
                 )
               ),
         

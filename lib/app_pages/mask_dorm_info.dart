@@ -61,7 +61,7 @@ class _DormInfoMaskState extends State<DormInfoMask> {
     if (widget.dorm.imagePath.isEmpty) {
       return AspectRatio(
         aspectRatio: 2,
-        child: Image.asset("assets/dorm_placeholder.jpg", fit: BoxFit.cover)
+        child: Image.asset("assets/dorm_placeholder.png", fit: BoxFit.cover)
       );
     }
 
