@@ -53,10 +53,10 @@ class ReviewInfoPage extends StatelessWidget {
           ),
           RatingBar.builder( 
             allowHalfRating: true,
+            ignoreGestures: true,
             glow: false,
-            tapOnlyMode: false,
+            tapOnlyMode: true,
             updateOnDrag: false,
-            ignoreGestures: false,
             direction: Axis.horizontal,
             minRating: 1,
             maxRating: 5,
@@ -64,7 +64,7 @@ class ReviewInfoPage extends StatelessWidget {
             itemSize: 50,
             itemCount: 5,
             itemBuilder: (context, _) 
-              => const Icon(Icons.star,
+              => const Icon(Icons.star_rounded,
                 color: AppPalette.gold
               ), 
             onRatingUpdate: (rating) {
@@ -90,10 +90,10 @@ class ReviewInfoPage extends StatelessWidget {
           ),
           RatingBar.builder( 
             allowHalfRating: true,
+            ignoreGestures: true,
             glow: false,
-            tapOnlyMode: false,
+            tapOnlyMode: true,
             updateOnDrag: false,
-            ignoreGestures: false,
             direction: Axis.horizontal,
             minRating: 1,
             maxRating: 5,
@@ -101,7 +101,7 @@ class ReviewInfoPage extends StatelessWidget {
             itemSize: 27.5,
             itemCount: 5,
             itemBuilder: (context, _) 
-              => const Icon(Icons.star,
+              => const Icon(Icons.star_rounded,
                 color: AppPalette.gold,
               ), 
             onRatingUpdate: (rating) {

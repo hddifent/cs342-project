@@ -98,7 +98,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             itemSize: 27.5,
             itemCount: 5,
             itemBuilder: (context, _) 
-              => const Icon(Icons.star,
+              => const Icon(Icons.star_rounded,
                 color: AppPalette.gold
               ), 
             onRatingUpdate: (rating) {

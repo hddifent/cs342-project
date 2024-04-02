@@ -56,10 +56,10 @@ class ReviewCard extends StatelessWidget {
         _reviewerInfo(),
         RatingBar.builder( 
           allowHalfRating: true,
+          ignoreGestures: true,
+          tapOnlyMode: true,
           glow: false,
-          tapOnlyMode: false,
           updateOnDrag: false,
-          ignoreGestures: false,
           direction: Axis.horizontal,
           minRating: 1,
           maxRating: 5,
@@ -67,7 +67,7 @@ class ReviewCard extends StatelessWidget {
           itemSize: 27.5,
           itemCount: 5,
           itemBuilder: (context, _) 
-            => const Icon(Icons.star,
+            => const Icon(Icons.star_rounded,
               color: AppPalette.gold
             ), 
           onRatingUpdate: (rating) {
