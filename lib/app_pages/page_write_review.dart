@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cs342_project/app_pages/mask_dorm_info.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:cs342_project/database/firestore.dart';
 import 'package:cs342_project/global.dart';
@@ -6,12 +7,15 @@ import 'package:cs342_project/models/review.dart';
 import 'package:cs342_project/widgets/green_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../models/dorm.dart';
 
 class WriteReviewPage extends StatefulWidget {
-  final String dormName;
-  final String dormID;
+  final Dorm dorm;
+  final bool isEdit;
+  final Review? review;
+  final String? reviewID;
 
-  const WriteReviewPage({super.key, required this.dormName, required this.dormID});
+  const WriteReviewPage({super.key, required this.dorm, this.isEdit = false, this.review, this.reviewID});
 
   @override
   State<WriteReviewPage> createState() => _WriteReviewPageState();
@@ -37,17 +41,43 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit) {
+      Review r = widget.review!;
+      _priceRating = r.priceRating;
+      _hygieneRating = r.hygieneRating;
+      _serviceRating = r.serviceRating;
+      _travelingRating = r.serviceRating;
+      _reviewController.text = r.review;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Write a review"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) 
+                    => DormInfoMask(dorm: widget.dorm, initialIndex: 1)
+                )
+              );
+            }, 
+            icon: const Icon(Icons.arrow_back)
+          ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         child: Column(
           children: <Widget>[
-            Text('You are writing a review for ${widget.dormName}',
+            Text('You are writing a review for ${widget.dorm.dormName}',
               style: const TextStyle(
                 fontSize: 25, 
                 fontWeight: FontWeight.bold
@@ -56,10 +86,10 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             
             const SizedBox(height: 10),
             
-            _ratingBar('Price'),
-            _ratingBar('Hygiene'),
-            _ratingBar('Service'),
-            _ratingBar('Traveling'),
+            _ratingBar('Price', _priceRating),
+            _ratingBar('Hygiene', _hygieneRating),
+            _ratingBar('Service', _serviceRating),
+            _ratingBar('Traveling', _travelingRating),
 
             const SizedBox(height: 10),
 
@@ -76,7 +106,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     );
   }
 
-  Widget _ratingBar(String label) {
+  Widget _ratingBar(String label, int labelRating) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -93,6 +123,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             allowHalfRating: false,
             updateOnDrag: true,
             direction: Axis.horizontal,
+            initialRating: labelRating.toDouble(),
             minRating: 1,
             maxRating: 5,
             itemSize: 27.5,
@@ -166,7 +197,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
     if (!_isPostError) {
       Review newReview = Review(
         userID: _userDB.getDocumentReference(currentUser!.uid), 
-        dormID: _dormDB.getDocumentReference(widget.dormID), 
+        dormID: _dormDB.getDocumentReference(widget.dorm.dormID), 
         priceRating: _priceRating, 
         hygieneRating: _hygieneRating, 
         serviceRating: _serviceRating, 
@@ -175,11 +206,18 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         postTimestamp: Timestamp.now()
       );
 
-      await _reviewDB.addDocument(null, newReview.toFirestore());
+      if (widget.isEdit) {
+        await _reviewDB.updateDocument(widget.reviewID!, newReview.toFirestore());
+      } else {
+        await _reviewDB.addDocument(null, newReview.toFirestore());
+      }
 
       setState(() {
         _reviewController.clear();
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(builder: (context) => DormInfoMask(dorm: widget.dorm, initialIndex: 1))
+        );
       });      
     }
   }

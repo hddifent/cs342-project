@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 
 class DormInfoMask extends StatefulWidget {
   final Dorm dorm;
+  final int initialIndex;
 
-  const DormInfoMask({super.key, required this.dorm});
+  const DormInfoMask({super.key, required this.dorm, this.initialIndex = 0});
 
   @override
   State<DormInfoMask> createState() => _DormInfoMaskState();
@@ -16,12 +17,13 @@ class DormInfoMask extends StatefulWidget {
 class _DormInfoMaskState extends State<DormInfoMask> {
   bool _loading = true;
 
-  int _pageIndex = 0;
+  late int _pageIndex;
   late List<Widget> _pageWidgets;
 
   @override
   void initState() {
     super.initState();
+    _pageIndex = widget.initialIndex;
     _pageWidgets = [DormInfoPage(dorm: widget.dorm), DormReviewPage(dorm: widget.dorm)];
     setState(() {
       _loading = false;

@@ -72,7 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 context, 
                 MaterialPageRoute(
                   builder: (context) 
-                    => const MainMask(intialIndex: 2)
+                    => const MainMask(initialIndex: 2)
                 )
               );
             }, 

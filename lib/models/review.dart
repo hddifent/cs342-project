@@ -59,7 +59,7 @@ class Review {
       "review": review,
       "helpfulRatedNumber": helpfulRatedNumber,
       "ratedNumber": ratedNumber,
-      "postTImestamp": postTimestamp
+      "postTimestamp": postTimestamp
     };
   }
 

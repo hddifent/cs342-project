@@ -25,6 +25,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
 
   List<ReviewCard> _reviews = [];
   ReviewCard? userReview;
+  String? userReviewID;
   int _totalReview = -1;
 
   @override
@@ -71,7 +72,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
             ),
             greenButton(
               userReview == null ? "Write" : "Edit",
-              _writeReview, width: 100, icon: Icons.edit
+              _reviewAction, width: 100, icon: Icons.edit
             )
           ]
         ),
@@ -81,13 +82,15 @@ class _DormReviewPageState extends State<DormReviewPage> {
     );
   }
 
-  void _writeReview() {
-    Navigator.push(context, 
+  void _reviewAction() {
+    Navigator.pushReplacement(context, 
       MaterialPageRoute(
         builder: (context) 
           => WriteReviewPage(
-            dormName: widget.dorm.dormName,
-            dormID: widget.dorm.dormID,
+            dorm: widget.dorm,
+            isEdit: userReview != null,
+            review: userReview!.review,
+            reviewID: userReviewID,
           )
       )
     );
@@ -127,6 +130,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
 
             if (currentAppUser != null && review.userID.id == currentAppUser!.userID) {
               userReview = reviewCard;
+              userReviewID = doc.id;
             }
           }
         }
