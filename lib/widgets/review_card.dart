@@ -15,7 +15,12 @@ class ReviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewInfoPage(review: review))),
+      onTap: () => Navigator.push(
+        context, 
+        MaterialPageRoute(
+          builder: (context) => ReviewInfoPage(review: review, appUser: appUser)
+        )
+      ),
 
       child: SizedBox(
         height: 140,
@@ -50,25 +55,25 @@ class ReviewCard extends StatelessWidget {
       children: <Widget>[
         _reviewerInfo(),
         RatingBar.builder( 
-            allowHalfRating: true,
-            glow: false,
-            tapOnlyMode: false,
-            updateOnDrag: false,
-            ignoreGestures: false,
-            direction: Axis.horizontal,
-            minRating: 1,
-            maxRating: 5,
-            initialRating: review.getOverallRating(),
-            itemSize: 27.5,
-            itemCount: 5,
-            itemBuilder: (context, _) 
-              => const Icon(Icons.star,
-                color: AppPalette.gold
-              ), 
-            onRatingUpdate: (rating) {
-              rating = review.getOverallRating();
-            },
-          )
+          allowHalfRating: true,
+          glow: false,
+          tapOnlyMode: false,
+          updateOnDrag: false,
+          ignoreGestures: false,
+          direction: Axis.horizontal,
+          minRating: 1,
+          maxRating: 5,
+          initialRating: review.getOverallRating(),
+          itemSize: 27.5,
+          itemCount: 5,
+          itemBuilder: (context, _) 
+            => const Icon(Icons.star,
+              color: AppPalette.gold
+            ), 
+          onRatingUpdate: (rating) {
+            rating = review.getOverallRating();
+          },
+        )
       ],
     );
   }

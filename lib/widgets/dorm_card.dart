@@ -66,7 +66,7 @@ class DormCard extends StatelessWidget {
 
                       Expanded(
                         child: Text(
-                          isReview ? dorm.dormDescription : review!.review,
+                          isReview ? review!.review : dorm.dormDescription,
                           style: AppTextStyle.body,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
