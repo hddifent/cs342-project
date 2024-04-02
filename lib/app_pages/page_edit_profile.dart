@@ -250,6 +250,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future takePicture(ImageSource source) async {
+    setState(() { _isLoading = true; });
     try {
       XFile? image = await ImagePicker().pickImage(source: source);
 
@@ -260,7 +261,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       String? imageURL = await _storageDB.saveImage(currentUser!.uid, imageFile);
 
       setState(() {
-        _isLoading = true;
         currentAppUser!.profileImageURL = imageURL!;
       });
 
