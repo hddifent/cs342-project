@@ -1,6 +1,7 @@
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/review.dart";
+import "package:firebase_storage/firebase_storage.dart";
 
 class Dorm {
   final String dormID;
@@ -13,6 +14,7 @@ class Dorm {
   final Map<String, dynamic> contactInfo;
 
   double rating = 0;
+  List<String> imagePath = [];
 
   Dorm._(this.dormID, {
     required this.dormName,
@@ -35,7 +37,8 @@ class Dorm {
       contactInfo: map["contactInfo"]
     );
 
-    await dorm.getRating();
+    await dorm._getRating();
+    await dorm._getImages();
 
     return dorm;
   }
@@ -51,7 +54,7 @@ class Dorm {
     };
   }
 
-  Future<void> getRating() async {
+  Future<void> _getRating() async {
     double totalScore = 0;
     int totalReview = 0;
 
@@ -72,5 +75,13 @@ class Dorm {
     });
 
     rating = totalReview > 0 ? totalScore / totalReview : 0;
+  }
+
+  Future<void> _getImages() async {
+    Reference storageRef = FirebaseStorage.instance.ref().child("dormImages/$dormID");
+    ListResult listResult = await storageRef.listAll();
+    for (Reference r in listResult.items) {
+      imagePath.add(await r.getDownloadURL());
+    }
   }
 }

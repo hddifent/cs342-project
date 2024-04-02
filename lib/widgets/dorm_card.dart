@@ -36,7 +36,8 @@ class DormCard extends StatelessWidget {
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(_roundRadius), bottomLeft: Radius.circular(_roundRadius)),
                 child: AspectRatio(
                   aspectRatio: pictureRatio,
-                  child: Image.asset("assets/dorm_placeholder.jpg", fit: BoxFit.cover)
+                  child: dorm.imagePath.isNotEmpty ? Image.network(dorm.imagePath[0], fit: BoxFit.cover)
+                                                   : Image.asset("assets/dorm_placeholder.jpg", fit: BoxFit.cover)
                 )
               ),
         
