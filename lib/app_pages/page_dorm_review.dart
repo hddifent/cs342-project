@@ -108,6 +108,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
   }
 
   Future<List<ReviewCard>> _getReviewList(List<AppUser> appUserList) async {
+    List<Review> reviewList = [];
     List<ReviewCard> reviewCardList = [];
 
     FirestoreDatabase reviewsDB = FirestoreDatabase("reviews");
@@ -117,18 +118,23 @@ class _DormReviewPageState extends State<DormReviewPage> {
         for (QueryDocumentSnapshot<Object?> doc in reviewCollection.docs) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           Review review = Review.fromFirestore(data);
-
           if (review.dormID.id == widget.dorm.dormID) {
-            ReviewCard reviewCard = ReviewCard(
-              review: review,
-              appUser: appUserList.firstWhere((element) => element.userID == review.userID.id)
-            );
+            reviewList.add(review);
+          }
+        }
 
-            reviewCardList.add(reviewCard);
+        reviewList.sort((a, b) => b.postTimestamp.compareTo(a.postTimestamp));
 
-            if (currentAppUser != null && review.userID.id == currentAppUser!.userID) {
-              userReview = reviewCard;
-            }
+        for (Review review in reviewList) {
+          ReviewCard reviewCard = ReviewCard(
+            review: review,
+            appUser: appUserList.firstWhere((element) => element.userID == review.userID.id)
+          );
+
+          reviewCardList.add(reviewCard);
+
+          if (currentAppUser != null && review.userID.id == currentAppUser!.userID) {
+            userReview = reviewCard;
           }
         }
       }
