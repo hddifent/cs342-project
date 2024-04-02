@@ -77,7 +77,7 @@ class _SearchPageState extends State<SearchPage> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
+        padding: const EdgeInsets.symmetric(vertical: 2.5),
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
