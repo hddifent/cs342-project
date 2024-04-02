@@ -158,8 +158,9 @@ class _SearchPageState extends State<SearchPage> {
 
             filteredDormList = List.from(sorted);
           }
-          // else if (sortType == 2) { // by rating
-          // }
+          else if (sortType == 2) { // by rating
+            filteredDormList.sort((a, b) => b.rating.compareTo(a.rating));
+          }
           else if (sortType == 3) { // by price
             filteredDormList.sort((a, b) => a.monthlyPrice.compareTo(b.monthlyPrice));
           }
