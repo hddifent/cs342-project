@@ -203,8 +203,7 @@ class _SignUpPageState extends State<SignUpPage> {
           email: _emailController.text, 
           firstName: _firstNameController.text.capitalize(), 
           lastName: _lastNameController.text.capitalize(), 
-          username: _usernameController.text.toLowerCase(), 
-          password: _passwordController.text
+          username: _usernameController.text.toLowerCase(),
         )
       );
     }

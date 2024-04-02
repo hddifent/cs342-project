@@ -25,6 +25,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
 
   List<ReviewCard> _reviews = [];
   ReviewCard? userReview;
+  String? userReviewID;
   int _totalReview = -1;
 
   @override
@@ -72,7 +73,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
             ),
             greenButton(
               userReview == null ? "Write" : "Edit",
-              _writeReview, width: 100, icon: Icons.edit
+              _reviewAction, width: 100, icon: Icons.edit
             )
           ]
         ),
@@ -82,13 +83,14 @@ class _DormReviewPageState extends State<DormReviewPage> {
     );
   }
 
-  void _writeReview() {
-    Navigator.push(context, 
+  void _reviewAction() {
+    Navigator.pushReplacement(context, 
       MaterialPageRoute(
         builder: (context) 
           => WriteReviewPage(
-            dormName: widget.dorm.dormName,
-            dormID: widget.dorm.dormID,
+            dorm: widget.dorm,
+            isEdit: userReview != null,
+            review: userReview!.review,
           )
       )
     );
@@ -118,13 +120,13 @@ class _DormReviewPageState extends State<DormReviewPage> {
         for (QueryDocumentSnapshot<Object?> doc in reviewCollection.docs) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           Review review = Review.fromFirestore(data);
+          review.reviewID = doc.id;
           if (review.dormID.id == widget.dorm.dormID) {
             reviewList.add(review);
           }
         }
 
         reviewList.sort((a, b) => b.postTimestamp.compareTo(a.postTimestamp));
-
         for (Review review in reviewList) {
           ReviewCard reviewCard = ReviewCard(
             review: review,
@@ -135,6 +137,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
 
           if (currentAppUser != null && review.userID.id == currentAppUser!.userID) {
             userReview = reviewCard;
+            userReviewID = review.reviewID;
           }
         }
       }

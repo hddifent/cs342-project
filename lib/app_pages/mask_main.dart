@@ -7,9 +7,9 @@ import 'package:cs342_project/global.dart';
 import 'package:flutter/material.dart';
 
 class MainMask extends StatefulWidget {
-  final int intialIndex;
+  final int initialIndex;
 
-  const MainMask({super.key, this.intialIndex = 0});
+  const MainMask({super.key, this.initialIndex = 0});
 
   @override
   State<MainMask> createState() => _MainMaskState();
@@ -24,7 +24,7 @@ class _MainMaskState extends State<MainMask> {
   @override
   void initState() {
     super.initState();
-    pageIndex = widget.intialIndex;
+    pageIndex = widget.initialIndex;
   }
 
   @override

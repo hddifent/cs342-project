@@ -1,3 +1,5 @@
+import "dart:html";
+
 import "package:cs342_project/app_pages/mask_main.dart";
 import "package:cs342_project/database/firebase_auth.dart";
 import "package:cs342_project/database/firebase_storage.dart";
@@ -5,6 +7,7 @@ import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/global.dart";
 import "package:cs342_project/utils/string_extension.dart";
 import "package:cs342_project/widgets/loading.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_storage/firebase_storage.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart" show timeDilation;
@@ -35,7 +38,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String _firstNameText = currentAppUser!.firstName, 
     _lastNameText = currentAppUser!.lastName, 
     _usernameText = currentAppUser!.username;
-  final String  _oldPasswordText = currentAppUser!.password;
 
   String _saveChangesErrorText = 'Save Changes', 
     _changePasswordErrorText = 'Change Password';
@@ -72,7 +74,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 context, 
                 MaterialPageRoute(
                   builder: (context) 
-                    => const MainMask(intialIndex: 2)
+                    => const MainMask(initialIndex: 2)
                 )
               );
             }, 
@@ -334,9 +336,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _confirmPasswordController.text.isEmpty) {
         _isChangePasswordError = true;
         _changePasswordErrorText = 'Please fill the blanks';
-      } else if (_oldPasswordController.text != _oldPasswordText) {
-        _isChangePasswordError = true;
-        _changePasswordErrorText = 'Wrong current password';
       } else if (_newPasswordController.text != _confirmPasswordController.text) {
         _isChangePasswordError = true;
         _changePasswordErrorText = 'Wrong confirmation';
