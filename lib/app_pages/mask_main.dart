@@ -70,7 +70,7 @@ class _MainMaskState extends State<MainMask> {
         context: context, 
         builder: (context) => AlertDialog(
           content: const Text(
-            'Do you really want to log out?', 
+            'Do you really want to \nlog out?', 
             style: TextStyle(fontSize: 20),
           ),
           actions: [

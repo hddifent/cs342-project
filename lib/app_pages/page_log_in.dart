@@ -164,7 +164,7 @@ class _LogInPageState extends State<LogInPage> {
           () => _pushPage(const SignUpPage(), null)
         ),
 
-        const Text(' or '),
+        const Text('or'),
         
         textButton('browse as guest', Alignment.centerRight, 116,
           () => _pushPage(const MainMask(), null)
