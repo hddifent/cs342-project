@@ -24,6 +24,8 @@ class Dorm {
   });
 
   static Future<Dorm> fromFirestore(String dormID, Map<String, dynamic> map) async {
+    map["description"] = (map["description"] as String).replaceAll(r"\n", "\n");
+
     Dorm dorm = Dorm._(dormID,
       dormName: map["name"],
       dormDescription: map["description"],
