@@ -47,7 +47,12 @@ class DormCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(dorm.dormName, style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
+                      Text(
+                        dorm.dormName,
+                        style: AppTextStyle.heading1.merge(AppTextStyle.bold),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1
+                      ),
 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,7 +74,7 @@ class DormCard extends StatelessWidget {
                           isReview ? review!.review : dorm.dormDescription,
                           style: AppTextStyle.body,
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
+                          maxLines: 3
                         )
                       )
                     ]
