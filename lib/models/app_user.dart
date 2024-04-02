@@ -8,7 +8,6 @@ class AppUser {
   String firstName;
   String lastName;
   String username;
-  String password;
   String profileImageURL;
 
   AppUser(this.userID, {
@@ -16,7 +15,6 @@ class AppUser {
     required this.firstName,
     required this.lastName,
     required this.username,
-    required this.password,
     this.profileImageURL = '',
   });
 
@@ -31,8 +29,7 @@ class AppUser {
       email: map['email'], 
       firstName: map['firstName'], 
       lastName: map['lastName'], 
-      username: map['username'], 
-      password: map['password'], 
+      username: map['username'],
       profileImageURL: map['profileImageURL']
     );
   }
@@ -43,7 +40,6 @@ class AppUser {
       "firstName" : firstName,
       "lastName" : lastName,
       "username" : username,
-      "password" : password,
       "profileImageURL" : profileImageURL
     };
   }

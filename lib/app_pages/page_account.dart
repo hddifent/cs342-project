@@ -30,10 +30,12 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _initData() async {
-    List<Dorm> dormList = [];
+    if (currentUser != null) {
+      List<Dorm> dormList = [];
     
-    await _getDormList().then((value) => dormList = value);
-    await _yourReviews(dormList).then((value) => _yourReviewsList = value);
+      await _getDormList().then((value) => dormList = value);
+      await _yourReviews(dormList).then((value) => _yourReviewsList = value);
+    }
 
     if (!mounted) { return; }
     setState(() { _isLoading = false; });

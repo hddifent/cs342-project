@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Review {
+  String? reviewID;
+
   DocumentReference userID;
   DocumentReference dormID;
   int priceRating;
@@ -13,6 +15,7 @@ class Review {
   Timestamp postTimestamp;
 
   Review({
+    this.reviewID,
     required this.userID,
     required this.dormID,
     required this.priceRating,

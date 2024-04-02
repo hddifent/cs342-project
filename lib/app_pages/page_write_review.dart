@@ -13,9 +13,8 @@ class WriteReviewPage extends StatefulWidget {
   final Dorm dorm;
   final bool isEdit;
   final Review? review;
-  final String? reviewID;
 
-  const WriteReviewPage({super.key, required this.dorm, this.isEdit = false, this.review, this.reviewID});
+  const WriteReviewPage({super.key, required this.dorm, this.isEdit = false, this.review});
 
   @override
   State<WriteReviewPage> createState() => _WriteReviewPageState();
@@ -126,7 +125,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
             initialRating: labelRating.toDouble(),
             minRating: 1,
             maxRating: 5,
-            itemSize: 27.5,
+            itemSize: 30,
             itemCount: 5,
             itemBuilder: (context, _) 
               => const Icon(Icons.star_rounded,
@@ -207,7 +206,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
       );
 
       if (widget.isEdit) {
-        await _reviewDB.updateDocument(widget.reviewID!, newReview.toFirestore());
+        await _reviewDB.updateDocument(widget.review!.reviewID!, newReview.toFirestore());
       } else {
         await _reviewDB.addDocument(null, newReview.toFirestore());
       }

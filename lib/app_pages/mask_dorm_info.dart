@@ -40,10 +40,7 @@ class _DormInfoMaskState extends State<DormInfoMask> {
 
       body: Column(
         children: <Widget>[
-          AspectRatio(
-            aspectRatio: 2,
-            child: Image.asset("assets/dorm_placeholder.jpg", fit: BoxFit.cover)
-          ),
+          SizedBox(height: 200, child: _getImageAlbum()),
 
           Expanded(child: _pageWidgets[_pageIndex])
         ],
@@ -59,6 +56,31 @@ class _DormInfoMaskState extends State<DormInfoMask> {
 
         onTap: (index) => setState( () => _pageIndex = index )
       )
+    );
+  }
+
+  Widget _getImageAlbum() {
+    if (widget.dorm.imagePath.isEmpty) {
+      return AspectRatio(
+        aspectRatio: 2,
+        child: Image.asset("assets/dorm_placeholder.png", fit: BoxFit.cover)
+      );
+    }
+
+    List<Widget> imageList = [];
+
+    for (String path in widget.dorm.imagePath) {
+      imageList.add(
+        AspectRatio(
+          aspectRatio: 2,
+          child: Image.network(path, fit: BoxFit.cover)
+        )
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(children: imageList)
     );
   }
 }
