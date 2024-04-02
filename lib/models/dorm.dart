@@ -1,4 +1,6 @@
 import "package:cloud_firestore/cloud_firestore.dart";
+import "package:cs342_project/database/firestore.dart";
+import "package:cs342_project/models/review.dart";
 
 class Dorm {
   final String dormID;
@@ -10,7 +12,9 @@ class Dorm {
   final int monthlyPrice;
   final Map<String, dynamic> contactInfo;
 
-  const Dorm(this.dormID, {
+  double rating = 0;
+
+  Dorm._(this.dormID, {
     required this.dormName,
     required this.dormDescription,
     required this.geoLocation,
@@ -19,8 +23,8 @@ class Dorm {
     required this.contactInfo
   });
 
-  factory Dorm.fromFirestore(String dormID, Map<String, dynamic> map) {
-    return Dorm(dormID,
+  static Future<Dorm> fromFirestore(String dormID, Map<String, dynamic> map) async {
+    Dorm dorm = Dorm._(dormID,
       dormName: map["name"],
       dormDescription: map["description"],
       geoLocation: map["geoLocation"],
@@ -28,6 +32,10 @@ class Dorm {
       monthlyPrice: map["monthlyPrice"],
       contactInfo: map["contactInfo"]
     );
+
+    await dorm.getRating();
+
+    return dorm;
   }
 
   Map<String, dynamic> toFirestore() {
@@ -39,5 +47,28 @@ class Dorm {
       "monthlyPrice": monthlyPrice,
       "contactInfo": contactInfo
     };
+  }
+
+  Future<void> getRating() async {
+    double totalScore = 0;
+    int totalReview = 0;
+
+    FirestoreDatabase db = FirestoreDatabase("reviews");
+
+    await db.collection.get().then((reviewCollection) {
+      if (reviewCollection.docs.isNotEmpty) {
+        for (QueryDocumentSnapshot<Object?> doc in reviewCollection.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          Review review = Review.fromFirestore(data);
+
+          if (review.dormID.id == dormID) {
+            totalScore += review.getOverallRating();
+            totalReview += 1;
+          }
+        }
+      }
+    });
+
+    rating = totalReview > 0 ? totalScore / totalReview : 0;
   }
 }

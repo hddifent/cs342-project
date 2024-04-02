@@ -71,6 +71,24 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Future<List<Dorm>> _getDormList() async {
+    List<Dorm> dormList = [];
+
+    FirestoreDatabase db = FirestoreDatabase("dorms");
+    await db.collection.get().then((dormCollection) async {
+      if (dormCollection.docs.isNotEmpty) {
+        for (QueryDocumentSnapshot<Object?> doc in dormCollection.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          await Dorm.fromFirestore(doc.id, data).then((value) {
+            dormList.add(value);
+          });
+        }
+      }
+    });
+
+    return dormList;
+  }
+
   Widget _categoryTabBar() {
     return SizedBox(
       height: 40,
@@ -97,39 +115,35 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _dormList(int sortType, String search) {
-    FirestoreDatabase db = FirestoreDatabase("dorms");
-    return StreamBuilder<QuerySnapshot>(
-      stream: db.getStream("name"),
+    return FutureBuilder(
+      future: _getDormList(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<QueryDocumentSnapshot<Object?>> dormDocList = snapshot.data?.docs ?? [];
-          List<Dorm> dormList = [];
+          List<Dorm> filteredDormList = [];
           List<Widget> dormCardList = [];
 
           // Get dorm from DB
-          for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            Dorm dorm = Dorm.fromFirestore(doc.id, data);
+          for (Dorm dorm in snapshot.data!) {
 
             if (
               search.isEmpty ||
               dorm.dormName.toLowerCase().contains(search.toLowerCase()) ||
               dorm.location.toLowerCase().contains(search.toLowerCase())
             ) {
-              dormList.add(dorm);
+              filteredDormList.add(dorm);
             }
           }
 
           // Sort
-          if (sortType == 0) {
-            dormList.sort((a, b) => a.dormName.compareTo(b.dormName));
+          if (sortType == 0) { // by name
+            filteredDormList.sort((a, b) => a.dormName.compareTo(b.dormName));
           }
-          else if (sortType == 1) {
+          else if (sortType == 1) { // by nearest
             Map<int, double> distanceIndexMap = { };
             Point userPoint = Point(_userLocation.latitude, _userLocation.longitude);
 
-            for (int i = 0; i < dormList.length; i++) {
-              Dorm d = dormList[i];
+            for (int i = 0; i < filteredDormList.length; i++) {
+              Dorm d = filteredDormList[i];
               Point dormPoint = Point(d.geoLocation.latitude, d.geoLocation.longitude);
               distanceIndexMap.addAll({i: userPoint.distanceTo(dormPoint)});
             }
@@ -139,20 +153,22 @@ class _SearchPageState extends State<SearchPage> {
             List<Dorm> sorted = [];
 
             for (int i = 0; i < distanceIndexMap.length; i++) {
-              sorted.add(dormList[distanceIndexMap.keys.toList()[i]]);
+              sorted.add(filteredDormList[distanceIndexMap.keys.toList()[i]]);
             }
 
-            dormList = List.from(sorted);
+            filteredDormList = List.from(sorted);
           }
-          else if (sortType == 3) {
-            dormList.sort((a, b) => a.monthlyPrice.compareTo(b.monthlyPrice));
+          // else if (sortType == 2) { // by rating
+          // }
+          else if (sortType == 3) { // by price
+            filteredDormList.sort((a, b) => a.monthlyPrice.compareTo(b.monthlyPrice));
           }
           else {
-            dormList.sort((a, b) => a.dormName.compareTo(b.dormName));
+            filteredDormList.sort((a, b) => a.dormName.compareTo(b.dormName));
           }
 
           // Add DormCard
-          for (Dorm d in dormList) {
+          for (Dorm d in filteredDormList) {
             dormCardList.add(DormCard(dorm: d));
           }
 
@@ -163,7 +179,7 @@ class _SearchPageState extends State<SearchPage> {
           );
         }
         else {
-          return const Text("No Dorm in database...");
+          return const CircularProgressIndicator();
         }
       }
     );

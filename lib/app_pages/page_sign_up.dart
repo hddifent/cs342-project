@@ -198,8 +198,8 @@ class _SignUpPageState extends State<SignUpPage> {
     if (uid != null) {
       setState(() => _isLoading = true);
       await AuthenticationDatabase.signingUp(
-        uid, 
         AppUser(
+          uid,
           email: _emailController.text, 
           firstName: _firstNameController.text.capitalize(), 
           lastName: _lastNameController.text.capitalize(), 

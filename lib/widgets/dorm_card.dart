@@ -101,10 +101,10 @@ class DormCard extends StatelessWidget {
         children: starIcon
       );
     }
-    return const Row(
+    return Row(
       children: <Widget>[
-        Text("4.8", style: AppTextStyle.heading2),
-        Icon(Icons.star_rounded, color: AppPalette.gold)
+        Text(dorm.rating.toStringAsFixed(1), style: AppTextStyle.heading2),
+        const Icon(Icons.star_rounded, color: AppPalette.gold)
       ]
     );
   }

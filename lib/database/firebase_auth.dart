@@ -38,7 +38,7 @@ class AuthenticationDatabase {
       (DocumentSnapshot doc) {
         final userData = doc.data() as Map<String, dynamic>;
 
-        currentAppUser = AppUser.fromFirestore(userData);
+        currentAppUser = AppUser.fromFirestore(user.uid, userData);
         currentUser = user;
         print('logged in by ${currentAppUser!.username}');
       },
@@ -46,8 +46,8 @@ class AuthenticationDatabase {
     );
   }
 
-  static Future<void> signingUp(String? uid, AppUser appUser) async {
-    await userDB.addDocument(uid, appUser.toFirestore());
+  static Future<void> signingUp(AppUser appUser) async {
+    await userDB.addDocument(appUser.userID, appUser.toFirestore());
   }
 
   static Future<String?> changePassword(String newPassword) async {

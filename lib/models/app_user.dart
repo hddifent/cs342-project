@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class AppUser {
+  final String userID;
+
   String email;
   String firstName;
   String lastName;
@@ -9,7 +11,7 @@ class AppUser {
   String password;
   String profileImageURL;
 
-  AppUser({
+  AppUser(this.userID, {
     required this.email,
     required this.firstName,
     required this.lastName,
@@ -24,8 +26,8 @@ class AppUser {
     } return NetworkImage(profileImageURL);
   }
 
-  factory AppUser.fromFirestore(Map<String, dynamic> map) {
-    return AppUser(
+  factory AppUser.fromFirestore(String userID, Map<String, dynamic> map) {
+    return AppUser(userID,
       email: map['email'], 
       firstName: map['firstName'], 
       lastName: map['lastName'], 
