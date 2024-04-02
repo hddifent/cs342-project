@@ -11,6 +11,7 @@ import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
 import "../widgets/category_button.dart";
+import "../widgets/loading.dart";
 
 // ignore: must_be_immutable
 class SearchPage extends StatefulWidget {
@@ -180,7 +181,7 @@ class _SearchPageState extends State<SearchPage> {
           );
         }
         else {
-          return const CircularProgressIndicator();
+          return Expanded(child: loading(true));
         }
       }
     );

@@ -7,6 +7,7 @@ import 'package:cs342_project/models/app_user.dart';
 import 'package:cs342_project/models/dorm.dart';
 import 'package:cs342_project/models/review.dart';
 import 'package:cs342_project/widgets/green_button.dart';
+import 'package:cs342_project/widgets/loading.dart';
 import 'package:cs342_project/widgets/review_card.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class DormReviewPage extends StatefulWidget {
 }
 
 class _DormReviewPageState extends State<DormReviewPage> {
-  bool _loading = true;
+  bool _isLoading = true;
 
   List<ReviewCard> _reviews = [];
   ReviewCard? userReview;
@@ -34,24 +35,27 @@ class _DormReviewPageState extends State<DormReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: SingleChildScrollView(
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            
-            children: _loading ? <Widget>[const CircularProgressIndicator()] : <Widget>[
-              currentUser == null ? const SizedBox(height: 0) : _getYourReview(),
-              currentUser == null ? const SizedBox(height: 0) : const SizedBox(height: 10),
-          
-              Text("Reviews ($_totalReview)", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
-              Column(children: _reviews)
-            ]
-          ),
-        )
-      )
+    return Stack(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: SingleChildScrollView(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Column(
+                children: <Widget>[
+                  currentUser == null ? const SizedBox(height: 0) : _getYourReview(),
+                  currentUser == null ? const SizedBox(height: 0) : const SizedBox(height: 10),
+              
+                  Text("Reviews ($_totalReview)", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
+                  Column(children: _reviews)
+                ]
+              ),
+            )
+          )
+        ),
+        loading(_isLoading)
+      ]
     );
   }
 
@@ -98,7 +102,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
     if (!mounted) { return; }
     setState(() {
       _totalReview = _reviews.length;
-      _loading = false;
+      _isLoading = false;
     });
   }
 
