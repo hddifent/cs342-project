@@ -1,5 +1,3 @@
-import "dart:html";
-
 import "package:cs342_project/app_pages/mask_main.dart";
 import "package:cs342_project/database/firebase_auth.dart";
 import "package:cs342_project/database/firebase_storage.dart";
@@ -353,7 +351,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (!_isChangePasswordError) {
       setState(() {
-        currentAppUser!.password = _newPasswordController.text;
+        // currentAppUser!.password = _newPasswordController.text;
 
         _isChangePasswordSuccess = true;
         _changePasswordErrorText = 'Successfully Changed';
