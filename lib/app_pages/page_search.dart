@@ -6,6 +6,7 @@ import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/utils/geolocator_locate.dart";
 import "package:cs342_project/widgets/dorm_card.dart";
+import "package:cs342_project/widgets/text_field_icon.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
@@ -25,6 +26,8 @@ class _SearchPageState extends State<SearchPage> {
   bool _loading = true;
   LatLng _userLocation = const LatLng(0, 0);
 
+  String _searchTerm = "";
+
   @override
   void initState() {
     super.initState();
@@ -42,13 +45,19 @@ class _SearchPageState extends State<SearchPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SearchBar(
-              leading: const Icon(Icons.search),
-              hintText: "Search Dorm...",
-              controller: _searchController
-            )
+          TextFieldWithIcon(
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: _searchTerm.isEmpty ? null : IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                _searchController.clear();
+                setState(() => _searchTerm = _searchController.text);
+              }
+            ),
+            prompt: "Search Dorm...",
+            controller: _searchController,
+          
+            onChanged: (value) => setState(() => _searchTerm = value),
           ),
 
           Padding(
@@ -56,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
             child: _categoryTabBar()
           ),
 
-          _dormList(sortType)
+          _dormList(sortType, _searchTerm)
         ]
       )
     );
@@ -68,7 +77,7 @@ class _SearchPageState extends State<SearchPage> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
+        padding: const EdgeInsets.symmetric(vertical: 2.5),
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
@@ -87,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _dormList(int sortType) {
+  Widget _dormList(int sortType, String search) {
     FirestoreDatabase db = FirestoreDatabase("dorms");
     return StreamBuilder<QuerySnapshot>(
       stream: db.getStream("name"),
@@ -101,7 +110,14 @@ class _SearchPageState extends State<SearchPage> {
           for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
             Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
             Dorm dorm = Dorm.fromFirestore(doc.id, data);
-            dormList.add(dorm);
+
+            if (
+              search.isEmpty ||
+              dorm.dormName.toLowerCase().contains(search.toLowerCase()) ||
+              dorm.location.toLowerCase().contains(search.toLowerCase())
+            ) {
+              dormList.add(dorm);
+            }
           }
 
           // Sort

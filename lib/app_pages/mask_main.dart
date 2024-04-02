@@ -29,33 +29,37 @@ class _MainMaskState extends State<MainMask> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("KU Dorm"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: _logOut, 
-            icon: const Icon(Icons.exit_to_app, size: 30),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-          )
-        ],
+    return PopScope(
+      canPop: false,
+      
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("KU Dorm"),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              onPressed: _logOut, 
+              icon: const Icon(Icons.exit_to_app, size: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+            )
+          ],
+        ),
+      
+        body: pageWidgets[pageIndex],
+      
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: pageIndex,
+          selectedItemColor: AppPalette.darkGreen,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.map), label: "Discovery"),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account")
+          ],
+      
+          onTap: (index) => setState( () => pageIndex = index )
+        )
       ),
-
-      body: pageWidgets[pageIndex],
-
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: pageIndex,
-        selectedItemColor: AppPalette.darkGreen,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Discovery"),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account")
-        ],
-
-        onTap: (index) => setState( () => pageIndex = index )
-      )
     );
   }
 

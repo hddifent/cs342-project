@@ -1,4 +1,5 @@
 import "package:cs342_project/app_pages/page_edit_profile.dart";
+import "package:cs342_project/constants.dart";
 import "package:cs342_project/widgets/green_button.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart" show timeDilation;
@@ -33,12 +34,7 @@ class _AccountPageState extends State<AccountPage> {
 
           const SizedBox(height: 10),
 
-          const Text("Your Reviews", 
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold
-            ),
-          ),
+          Text("Your Reviews", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
 
           Center(child: _yourReviews())
         ],
@@ -73,14 +69,11 @@ class _AccountPageState extends State<AccountPage> {
 
   Widget _rightBar() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text("Hello, ${currentAppUser!.username}!", 
-          style: const TextStyle(
-            fontSize: 25,
-            fontWeight: FontWeight.bold
-          ),
+          style: AppTextStyle.heading1.merge(AppTextStyle.bold),
         ),
         greenButton("Edit Profile", 
           () => Navigator.pushReplacement(
@@ -110,7 +103,7 @@ class _AccountPageState extends State<AccountPage> {
           const Text(
             'To start reviewing, please log into your account.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 25),
+            style: AppTextStyle.heading1,
           ),
           greenButton('Login / Register', () => Navigator.pop(context))
         ],
