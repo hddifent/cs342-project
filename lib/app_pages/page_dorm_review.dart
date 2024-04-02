@@ -23,6 +23,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
   bool _loading = true;
 
   List<ReviewCard> _reviews = [];
+  ReviewCard? userReview;
   int _totalReview = -1;
 
   @override
@@ -41,30 +42,38 @@ class _DormReviewPageState extends State<DormReviewPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             
-          
-            children: <Widget>[
-              // TODO: Check for user review...
-              currentUser == null ? const SizedBox(height: 0) : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Your Review",
-                    style: AppTextStyle.heading1.merge(AppTextStyle.bold)
-                  ),
-                  greenButton("Write", _writeReview, width: 100, icon: Icons.edit)
-                ]
-              ),
-          
+            children: _loading ? <Widget>[const CircularProgressIndicator()] : <Widget>[
+              currentUser == null ? const SizedBox(height: 0) : _getYourReview(),
               currentUser == null ? const SizedBox(height: 0) : const SizedBox(height: 10),
           
-              _loading ? const CircularProgressIndicator()
-                       : Text("Reviews ($_totalReview)", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
-          
-              _loading ? const SizedBox(height: 0) : Column(children: _reviews)
+              Text("Reviews ($_totalReview)", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
+              Column(children: _reviews)
             ]
           ),
         )
       )
+    );
+  }
+
+  Widget _getYourReview() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Your Review",
+              style: AppTextStyle.heading1.merge(AppTextStyle.bold)
+            ),
+            greenButton(
+              userReview == null ? "Write" : "Edit",
+              _writeReview, width: 100, icon: Icons.edit
+            )
+          ]
+        ),
+
+        userReview ?? const SizedBox(width: 0, height: 0)
+      ]
     );
   }
 
@@ -105,12 +114,16 @@ class _DormReviewPageState extends State<DormReviewPage> {
           Review review = Review.fromFirestore(data);
 
           if (review.dormID.id == widget.dorm.dormID) {
-            reviewCardList.add(
-              ReviewCard(
-                review: review,
-                appUser: appUserList.firstWhere((element) => element.userID == review.userID.id)
-              )
+            ReviewCard reviewCard = ReviewCard(
+              review: review,
+              appUser: appUserList.firstWhere((element) => element.userID == review.userID.id)
             );
+
+            reviewCardList.add(reviewCard);
+
+            if (currentAppUser != null && review.userID.id == currentAppUser!.userID) {
+              userReview = reviewCard;
+            }
           }
         }
       }
