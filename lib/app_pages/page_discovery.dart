@@ -6,7 +6,6 @@ import "package:cs342_project/utils/geolocator_locate.dart";
 import "package:cs342_project/widgets/dorm_card.dart";
 import "package:cs342_project/widgets/text_field_icon.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
 class DiscoveryPage extends StatefulWidget {
