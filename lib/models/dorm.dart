@@ -12,7 +12,9 @@ class Dorm {
   final int monthlyPrice;
   final Map<String, dynamic> contactInfo;
 
-  const Dorm(this.dormID, {
+  double rating = 0;
+
+  Dorm._(this.dormID, {
     required this.dormName,
     required this.dormDescription,
     required this.geoLocation,
@@ -21,8 +23,8 @@ class Dorm {
     required this.contactInfo
   });
 
-  factory Dorm.fromFirestore(String dormID, Map<String, dynamic> map) {
-    return Dorm(dormID,
+  static Future<Dorm> fromFirestore(String dormID, Map<String, dynamic> map) async {
+    Dorm dorm = Dorm._(dormID,
       dormName: map["name"],
       dormDescription: map["description"],
       geoLocation: map["geoLocation"],
@@ -30,6 +32,10 @@ class Dorm {
       monthlyPrice: map["monthlyPrice"],
       contactInfo: map["contactInfo"]
     );
+
+    await dorm.getRating();
+
+    return dorm;
   }
 
   Map<String, dynamic> toFirestore() {
@@ -43,7 +49,7 @@ class Dorm {
     };
   }
 
-  Future<double> getRating() async {
+  Future<void> getRating() async {
     double totalScore = 0;
     int totalReview = 0;
 
@@ -63,6 +69,6 @@ class Dorm {
       }
     });
 
-    return totalReview > 0 ? totalScore / totalReview : 0;
+    rating = totalReview > 0 ? totalScore / totalReview : 0;
   }
 }

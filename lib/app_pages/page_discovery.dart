@@ -110,43 +110,47 @@ class _DiscoveryPageState extends State<DiscoveryPage> {
   Future<Set<Marker>> _getMarkersFromDB() async {
     Set<Marker> markers = { };
 
-    FirestoreDatabase db = FirestoreDatabase("dorms");
-    await db.collection.get().then((dormCollection) {
-      if (dormCollection.docs.isNotEmpty) {
-        for (QueryDocumentSnapshot<Object?> doc in dormCollection.docs) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          Dorm dorm = Dorm.fromFirestore(doc.id, data);
-
-          markers.add(
-            Marker(
-              markerId: MarkerId(doc.id),
-              position: LatLng(dorm.geoLocation.latitude, dorm.geoLocation.longitude),
-              onTap: () => setState(() {
-                selectedDorm = dorm;
-              })
-            )
-          );
-        }
-      }
-    });
+    List<Dorm> dormList = await _getDormList();
+    for (Dorm dorm in dormList) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(dorm.dormID),
+          position: LatLng(dorm.geoLocation.latitude, dorm.geoLocation.longitude),
+          onTap: () => setState(() {
+            selectedDorm = dorm;
+          })
+        )
+      );
+    }
 
     return markers;
   }
 
-  Widget _getMatchedEntries(String search) {
+  Future<List<Dorm>> _getDormList() async {
+    List<Dorm> dormList = [];
+
     FirestoreDatabase db = FirestoreDatabase("dorms");
-    return StreamBuilder<QuerySnapshot>(
-      stream: db.getStream("name"),
+    await db.collection.get().then((dormCollection) async {
+      if (dormCollection.docs.isNotEmpty) {
+        for (QueryDocumentSnapshot<Object?> doc in dormCollection.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          dormList.add(await Dorm.fromFirestore(doc.id, data));
+        }
+      }
+    });
+
+    return dormList;
+  }
+
+  Widget _getMatchedEntries(String search) {
+    return FutureBuilder(
+      future: _getDormList(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<QueryDocumentSnapshot<Object?>> dormDocList = snapshot.data?.docs ?? [];
           List<Widget> widgetList = [];
 
           // Get dorm from DB
-          for (QueryDocumentSnapshot<Object?> doc in dormDocList) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            Dorm dorm = Dorm.fromFirestore(doc.id, data);
-
+          for (Dorm dorm in snapshot.data!) {
             if (
               search.isEmpty ||
               dorm.dormName.toLowerCase().contains(search.toLowerCase()) ||
