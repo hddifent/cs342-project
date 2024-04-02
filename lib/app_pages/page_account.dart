@@ -3,11 +3,13 @@ import "package:cs342_project/app_pages/page_edit_profile.dart";
 import "package:cs342_project/constants.dart";
 import "package:cs342_project/database/firestore.dart";
 import "package:cs342_project/models/review.dart";
+import "package:cs342_project/widgets/dorm_card.dart";
 import "package:cs342_project/widgets/green_button.dart";
-import "package:cs342_project/widgets/review_card.dart";
+import "package:cs342_project/widgets/loading.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart" show timeDilation;
 import "../global.dart";
+import "../models/dorm.dart";
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -17,10 +19,35 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  List<DormCard> _yourReviewsList = [];
+
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  void _initData() async {
+    List<Dorm> dormList = [];
+    
+    await _getDormList().then((value) => dormList = value);
+    await _yourReviews(dormList).then((value) => _yourReviewsList = value);
+
+    if (!mounted) { return; }
+    setState(() { _isLoading = false; });
+  }
+
   @override
   Widget build(BuildContext context) {
     timeDilation = 1.0;
-    return currentUser != null ? _account() : _toStartReview();
+    return Stack(
+      children: <Widget>[
+        currentUser != null ? _account() : _toStartReview(),
+        loading(_isLoading)
+      ],
+    );
   }
 
   Widget _account() {
@@ -35,7 +62,7 @@ class _AccountPageState extends State<AccountPage> {
 
           Text("Your Reviews", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
 
-          _yourReviews()
+          Column(children: _yourReviewsList)
         ],
       ),
     );
@@ -84,43 +111,47 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Widget _yourReviews() {
-    final FirestoreDatabase reviewDB = FirestoreDatabase('reviews');
-    return StreamBuilder<QuerySnapshot>(
-      stream: reviewDB.getStream('userID'),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<QueryDocumentSnapshot<Object?>> reviewDocList = snapshot.data?.docs ?? [];
-          List<Review> reviewList = [];
-          List<Widget> reviewCardList = [];
+  Future<List<DormCard>> _yourReviews(List<Dorm> dormList) async {
+    List<DormCard> reviewCardList = [];
 
-          for (QueryDocumentSnapshot<Object?> doc in reviewDocList) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            Review review = Review.fromFirestore(data);
+    FirestoreDatabase reviewDB = FirestoreDatabase("reviews");
+  
+    await reviewDB.collection.get().then((reviewCollection) {
+      if (reviewCollection.docs.isNotEmpty) {
+        for (QueryDocumentSnapshot<Object?> doc in reviewCollection.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          Review review = Review.fromFirestore(data);
 
-            if (review.userID.id == currentUser!.uid) {
-              reviewList.add(review);
-            }
-          }
-
-          for (Review r in reviewList) {
-            reviewCardList.add(
-            ReviewCard(
-              review: r, 
-              appUser: currentAppUser!)
+          if (review.userID.id == currentUser!.uid) {
+            DormCard dormReviewCard = DormCard(
+              dorm: dormList.firstWhere((element) => element.dormID == review.dormID.id),
+              isReview: true, review: review
             );
-          }
 
-          return Expanded(
-            child: SingleChildScrollView(
-              child: Column(children: reviewCardList)
-            ),
-          );
-        } else {
-          return const Text("No Review in database...");
+            reviewCardList.add(dormReviewCard);
+          }
         }
       }
-    );
+    });
+    
+    return reviewCardList;
+  }
+
+  Future<List<Dorm>> _getDormList() async {
+    List<Dorm> dormList = [];
+
+    FirestoreDatabase dormDB = FirestoreDatabase("dorms");
+
+    await dormDB.collection.get().then((dormCollection) async {
+      if (dormCollection.docs.isNotEmpty) {
+        for (QueryDocumentSnapshot<Object?> doc in dormCollection.docs) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          dormList.add(await Dorm.fromFirestore(doc.id, data));
+        }
+      }
+    });
+
+    return dormList;
   }
 
   Widget _toStartReview() {
