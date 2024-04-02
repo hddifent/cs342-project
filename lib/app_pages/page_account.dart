@@ -1,6 +1,10 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:cs342_project/app_pages/page_edit_profile.dart";
 import "package:cs342_project/constants.dart";
+import "package:cs342_project/database/firestore.dart";
+import "package:cs342_project/models/review.dart";
 import "package:cs342_project/widgets/green_button.dart";
+import "package:cs342_project/widgets/review_card.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart" show timeDilation;
 import "../global.dart";
@@ -13,15 +17,10 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-
   @override
   Widget build(BuildContext context) {
     timeDilation = 1.0;
-    return Center(
-      child: currentUser != null ?
-        _account() :
-        _toStartReview()
-    );
+    return currentUser != null ? _account() : _toStartReview();
   }
 
   Widget _account() {
@@ -30,13 +29,13 @@ class _AccountPageState extends State<AccountPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Center(child: _profileBar(context)),
+          _profileBar(context),
 
           const SizedBox(height: 10),
 
           Text("Your Reviews", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
 
-          Center(child: _yourReviews())
+          _yourReviews()
         ],
       ),
     );
@@ -86,11 +85,41 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Widget _yourReviews() {
-    // TODO: This Is Also Placeholder, Adjust This Later
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[]
-      )
+    final FirestoreDatabase reviewDB = FirestoreDatabase('reviews');
+    return StreamBuilder<QuerySnapshot>(
+      stream: reviewDB.getStream('userID'),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<QueryDocumentSnapshot<Object?>> reviewDocList = snapshot.data?.docs ?? [];
+          List<Review> reviewList = [];
+          List<Widget> reviewCardList = [];
+
+          for (QueryDocumentSnapshot<Object?> doc in reviewDocList) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            Review review = Review.fromFirestore(data);
+
+            if (review.userID.id == currentUser!.uid) {
+              reviewList.add(review);
+            }
+          }
+
+          for (Review r in reviewList) {
+            reviewCardList.add(
+            ReviewCard(
+              review: r, 
+              appUser: currentAppUser!)
+            );
+          }
+
+          return Expanded(
+            child: SingleChildScrollView(
+              child: Column(children: reviewCardList)
+            ),
+          );
+        } else {
+          return const Text("No Review in database...");
+        }
+      }
     );
   }
 
