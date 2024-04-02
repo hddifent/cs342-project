@@ -1,8 +1,11 @@
 import "package:cs342_project/app_pages/mask_dorm_info.dart";
+import "package:cs342_project/app_pages/page_review_info.dart";
 import "package:cs342_project/constants.dart";
 import "package:cs342_project/models/dorm.dart";
 import "package:cs342_project/models/review.dart";
 import "package:flutter/material.dart";
+
+import "../models/app_user.dart";
 
 // TODO: This is a placeholder. Don't forget to adjust this widget later.
 class DormCard extends StatelessWidget {
@@ -12,15 +15,17 @@ class DormCard extends StatelessWidget {
   final Dorm dorm;
   final bool isReview;
   final Review? review;
+  final AppUser? appUser;
 
   const DormCard({
-    super.key, required this.dorm, this.isReview = false, this.review
+    super.key, required this.dorm, this.isReview = false, this.review, this.appUser
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DormInfoMask(dorm: dorm))),
+      onTap: () => isReview ? Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewInfoPage(review: review!, appUser: appUser!))) :
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DormInfoMask(dorm: dorm))),
 
       child: SizedBox(
         height: 140,

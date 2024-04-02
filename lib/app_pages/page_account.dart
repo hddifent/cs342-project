@@ -125,7 +125,7 @@ class _AccountPageState extends State<AccountPage> {
           if (review.userID.id == currentUser!.uid) {
             DormCard dormReviewCard = DormCard(
               dorm: dormList.firstWhere((element) => element.dormID == review.dormID.id),
-              isReview: true, review: review
+              isReview: true, review: review, appUser: currentAppUser,
             );
 
             reviewCardList.add(dormReviewCard);
