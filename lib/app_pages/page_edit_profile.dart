@@ -1,5 +1,3 @@
-import "dart:html";
-
 import "package:cs342_project/app_pages/mask_main.dart";
 import "package:cs342_project/database/firebase_auth.dart";
 import "package:cs342_project/database/firebase_storage.dart";
@@ -189,7 +187,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           controller: _confirmPasswordController, 
           prefixIcon: const Icon(Icons.lock, size: 30), 
           isObsecured: true,
-          onChanged: (text) => _checkTextFieldChange(true),
+          onChanged: (text) => _checkTextFieldChange(false),
           prompt: 'Confirm New Password',
           sizedBoxHeight: 15,
           isErrorLogic: _isChangePasswordError,
@@ -342,19 +340,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
     });
 
-    String? result = await AuthenticationDatabase.changePassword(_newPasswordController.text);
+    if (_isChangePasswordError) { return; }
+
+    String? result = await AuthenticationDatabase.changePassword(_oldPasswordController.text, _newPasswordController.text);
     setState(() {
-      if (result == 'weak-password') {
+      if (result == 'invalid-credential') {
         _isChangePasswordError = true;
-        //FIXME
+        _changePasswordErrorText = 'Wrong old password';
+      }
+      else if (result == 'weak-password') {
+        _isChangePasswordError = true;
         _changePasswordErrorText = 'Password should be \nat least 6 letters';
       }
     });
 
     if (!_isChangePasswordError) {
       setState(() {
-        currentAppUser!.password = _newPasswordController.text;
-
         _isChangePasswordSuccess = true;
         _changePasswordErrorText = 'Successfully Changed';
       });

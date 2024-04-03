@@ -40,7 +40,6 @@ class AuthenticationDatabase {
 
         currentAppUser = AppUser.fromFirestore(user.uid, userData);
         currentUser = user;
-        print('logged in by ${currentAppUser!.username}');
       },
       onError: (e) => throw e
     );
@@ -50,13 +49,18 @@ class AuthenticationDatabase {
     await userDB.addDocument(appUser.userID, appUser.toFirestore());
   }
 
-  static Future<String?> changePassword(String newPassword) async {
+  static Future<String?> changePassword(String oldPassword, String newPassword) async {
     try {
+      await currentUser!.reauthenticateWithCredential(
+        EmailAuthProvider.credential(email: currentUser!.email!, password: oldPassword)
+      );
       await currentUser!.updatePassword(newPassword);
-      return null;
-    } on FirebaseAuthException catch (e) {
+    }
+    on FirebaseAuthException catch (e) {
       return e.code;
     }
+
+    return null;
   }
 
   static Future logOutUser() async {
