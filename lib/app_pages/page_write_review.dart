@@ -35,8 +35,10 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   bool _isPostError = false;
 
   void _onPostChange() {
-    _isPostError = false;
-    _postErrorText = 'Post';
+    setState(() {
+      _isPostError = false;
+      _postErrorText = 'Post';
+    });
   }
 
   @override
