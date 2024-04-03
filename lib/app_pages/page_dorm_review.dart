@@ -90,7 +90,7 @@ class _DormReviewPageState extends State<DormReviewPage> {
           => WriteReviewPage(
             dorm: widget.dorm,
             isEdit: userReview != null,
-            review: userReview!.review,
+            review: userReview?.review,
           )
       )
     );
