@@ -8,14 +8,18 @@ class AuthenticationDatabase {
   static final FirebaseAuth auth = FirebaseAuth.instance;
   static final FirestoreDatabase userDB = FirestoreDatabase('users');
 
-  static Future<User?>? loginUser(String email, String password) async {
+  static User? getCurrentUser() { return auth.currentUser; }
+
+  static String? getCurrentUserID() { return getCurrentUser()!.uid; }
+
+  static Future<String> loginUser(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password
       );
-      return credential.user;
-    } on FirebaseAuthException { return null; }
+      return credential.user!.uid;
+    } on FirebaseAuthException { return 'Failed'; }
   }
 
   static Future<String?>? signUpUser(String email, String password) async {
@@ -39,7 +43,6 @@ class AuthenticationDatabase {
         final userData = doc.data() as Map<String, dynamic>;
 
         currentAppUser = AppUser.fromFirestore(user.uid, userData);
-        currentUser = user;
       },
       onError: (e) => throw e
     );
@@ -51,10 +54,10 @@ class AuthenticationDatabase {
 
   static Future<String?> changePassword(String oldPassword, String newPassword) async {
     try {
-      await currentUser!.reauthenticateWithCredential(
-        EmailAuthProvider.credential(email: currentUser!.email!, password: oldPassword)
+      await AuthenticationDatabase.getCurrentUser()!.reauthenticateWithCredential(
+        EmailAuthProvider.credential(email: AuthenticationDatabase.getCurrentUser()!.email!, password: oldPassword)
       );
-      await currentUser!.updatePassword(newPassword);
+      await AuthenticationDatabase.getCurrentUser()!.updatePassword(newPassword);
     }
     on FirebaseAuthException catch (e) {
       return e.code;
@@ -66,7 +69,6 @@ class AuthenticationDatabase {
   static Future logOutUser() async {
     await auth.signOut();
     currentAppUser = null;
-    currentUser = null;
   }
 
 }

@@ -1,5 +1,4 @@
 import 'package:cs342_project/database/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/green_button.dart';
 import '../widgets/loading.dart';
@@ -119,9 +118,9 @@ class _LogInPageState extends State<LogInPage> {
     });
 
     if (_isLogInError) { return; }
-    final User? user = await AuthenticationDatabase.loginUser(email, password);
+    final String uid = await AuthenticationDatabase.loginUser(email, password);
     setState(() {
-      if (user == null) {
+      if (uid == 'Failed') {
         _isLogInError = true;
         _passwordController.clear();
         _loginErrorText = 'Wrong email/password';
@@ -129,16 +128,16 @@ class _LogInPageState extends State<LogInPage> {
     });
     
     if (!_isLogInError) { 
-      _pushPage(const MainMask(), user); 
+      _pushPage(const MainMask()); 
     }
   }
 
-  void _pushPage(Widget page, User? user) async {
+  void _pushPage(Widget page) async {
     primaryFocus!.unfocus();
 
-    if (user != null) {
+    if (AuthenticationDatabase.getCurrentUser() != null) {
       setState(() => _isLoading = true);
-      await AuthenticationDatabase.loggingIn(user);
+      await AuthenticationDatabase.loggingIn(AuthenticationDatabase.getCurrentUser()!);
     }
 
     setState(() {
@@ -161,13 +160,13 @@ class _LogInPageState extends State<LogInPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         textButton('Sign up', Alignment.center, 60,
-          () => _pushPage(const SignUpPage(), null)
+          () => _pushPage(const SignUpPage())
         ),
 
         const Text('or'),
         
         textButton('browse as guest', Alignment.centerRight, 116,
-          () => _pushPage(const MainMask(), null)
+          () => _pushPage(const MainMask())
         ),
 
         const Text('.'),

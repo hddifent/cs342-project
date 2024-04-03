@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cs342_project/app_pages/mask_dorm_info.dart';
 import 'package:cs342_project/constants.dart';
+import 'package:cs342_project/database/firebase_auth.dart';
 import 'package:cs342_project/database/firestore.dart';
-import 'package:cs342_project/global.dart';
 import 'package:cs342_project/models/review.dart';
 import 'package:cs342_project/widgets/green_button.dart';
 import 'package:flutter/material.dart';
@@ -76,10 +76,14 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         child: Column(
           children: <Widget>[
-            Text('You are writing a review for ${widget.dorm.dormName}',
-              style: const TextStyle(
-                fontSize: 25, 
-                fontWeight: FontWeight.bold
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Text('You are writing a review for \n${widget.dorm.dormName}',
+                textAlign: TextAlign.start,
+                style: const TextStyle(
+                  fontSize: 25, 
+                  fontWeight: FontWeight.bold
+                ),
               ),
             ),
             
@@ -195,7 +199,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
 
     if (!_isPostError) {
       Review newReview = Review(
-        userID: _userDB.getDocumentReference(currentUser!.uid), 
+        userID: _userDB.getDocumentReference(AuthenticationDatabase.getCurrentUserID()!), 
         dormID: _dormDB.getDocumentReference(widget.dorm.dormID), 
         priceRating: _priceRating, 
         hygieneRating: _hygieneRating, 

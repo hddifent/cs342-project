@@ -258,13 +258,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       Uint8List imageFile = await image.readAsBytes();
 
-      String? imageURL = await _storageDB.saveImage(currentUser!.uid, imageFile);
+      String? imageURL = await _storageDB.saveImage(AuthenticationDatabase.getCurrentUserID()!, imageFile);
 
       setState(() {
         currentAppUser!.profileImageURL = imageURL!;
       });
 
-      await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
+      await _userDB.updateDocument(AuthenticationDatabase.getCurrentUserID()!, currentAppUser!.toFirestore());
       setState(() => _isLoading = false);
     } on PlatformException { rethrow; }
     on FirebaseException { rethrow; } 
@@ -312,7 +312,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       _setDescriptionTextFields();
 
-      await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
+      await _userDB.updateDocument(AuthenticationDatabase.getCurrentUserID()!, currentAppUser!.toFirestore());
     }
   }
 
@@ -360,7 +360,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _changePasswordErrorText = 'Successfully Changed';
       });
 
-      await _userDB.updateDocument(currentUser!.uid, currentAppUser!.toFirestore());
+      await _userDB.updateDocument(AuthenticationDatabase.getCurrentUserID()!, currentAppUser!.toFirestore());
     }
 
     setState(() {

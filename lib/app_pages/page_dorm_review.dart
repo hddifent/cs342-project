@@ -11,6 +11,8 @@ import 'package:cs342_project/widgets/loading.dart';
 import 'package:cs342_project/widgets/review_card.dart';
 import 'package:flutter/material.dart';
 
+import '../database/firebase_auth.dart';
+
 class DormReviewPage extends StatefulWidget {
   final Dorm dorm;
 
@@ -46,8 +48,10 @@ class _DormReviewPageState extends State<DormReviewPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  currentUser == null ? const SizedBox(height: 0) : _getYourReview(),
-                  currentUser == null ? const SizedBox(height: 0) : const SizedBox(height: 10),
+                  AuthenticationDatabase.getCurrentUser() == null ? 
+                    const SizedBox(height: 0) : _getYourReview(),
+                  AuthenticationDatabase.getCurrentUser() == null 
+                    ? const SizedBox(height: 0) : const SizedBox(height: 10),
               
                   Text("Reviews ($_totalReview)", style: AppTextStyle.heading1.merge(AppTextStyle.bold)),
                   Column(children: _reviews)

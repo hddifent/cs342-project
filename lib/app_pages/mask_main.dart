@@ -3,7 +3,6 @@ import 'package:cs342_project/app_pages/page_discovery.dart';
 import 'package:cs342_project/app_pages/page_search.dart';
 import 'package:cs342_project/constants.dart';
 import 'package:cs342_project/database/firebase_auth.dart';
-import 'package:cs342_project/global.dart';
 import 'package:flutter/material.dart';
 
 class MainMask extends StatefulWidget {
@@ -64,7 +63,7 @@ class _MainMaskState extends State<MainMask> {
   }
 
   void _logOut() async {
-    if (currentUser != null) { 
+    if (AuthenticationDatabase.getCurrentUser() != null) { 
       _isLogOut = false;
       await showDialog(
         context: context, 

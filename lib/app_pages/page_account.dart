@@ -8,6 +8,7 @@ import "package:cs342_project/widgets/green_button.dart";
 import "package:cs342_project/widgets/loading.dart";
 import "package:flutter/material.dart";
 import "package:flutter/scheduler.dart" show timeDilation;
+import "../database/firebase_auth.dart";
 import "../global.dart";
 import "../models/dorm.dart";
 
@@ -30,7 +31,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   void _initData() async {
-    if (currentUser != null) {
+    if (AuthenticationDatabase.getCurrentUser() != null) {
       List<Dorm> dormList = [];
     
       await _getDormList().then((value) => dormList = value);
@@ -46,7 +47,7 @@ class _AccountPageState extends State<AccountPage> {
     timeDilation = 1.0;
     return Stack(
       children: <Widget>[
-        currentUser != null ? _account() : _toStartReview(),
+        AuthenticationDatabase.getCurrentUser() != null ? _account() : _toStartReview(),
         loading(_isLoading)
       ],
     );
@@ -124,7 +125,7 @@ class _AccountPageState extends State<AccountPage> {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           Review review = Review.fromFirestore(data);
 
-          if (currentUser != null && review.userID.id == currentUser!.uid) {
+          if (AuthenticationDatabase.getCurrentUser() != null && review.userID.id == AuthenticationDatabase.getCurrentUser()!.uid) {
             DormCard dormReviewCard = DormCard(
               dorm: dormList.firstWhere((element) => element.dormID == review.dormID.id),
               isReview: true, review: review, appUser: currentAppUser,
