@@ -184,7 +184,6 @@ class _SignUpPageState extends State<SignUpPage> {
         _emailController.clear();
       } else if (uid == 'weak-password') {
         _isSignUpError = true;
-        //FIXME
         _signUpErrorText = 'Password should be \nat least 6 letters';
         _passwordController.clear();
         _confirmPasswordController.clear();

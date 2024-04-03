@@ -124,7 +124,7 @@ class _AccountPageState extends State<AccountPage> {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           Review review = Review.fromFirestore(data);
 
-          if (review.userID.id == currentUser!.uid) {
+          if (currentUser != null && review.userID.id == currentUser!.uid) {
             DormCard dormReviewCard = DormCard(
               dorm: dormList.firstWhere((element) => element.dormID == review.dormID.id),
               isReview: true, review: review, appUser: currentAppUser,

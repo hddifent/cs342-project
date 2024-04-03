@@ -12,7 +12,7 @@ class AppPalette {
 
 // Temporary Default Picture EiEi
 const String defaultPictureProfileLink =
-  "https://preview.redd.it/fsh2qi0yrbr71.png?width=640&crop=smart&auto=webp&s=927503df32f1134575a10107e1d84331cc129174";
+  "https://firebasestorage.googleapis.com/v0/b/ku-dorm-84be1.appspot.com/o/profileImages%2Fdefault.png?alt=media&token=fd9bbf61-bd78-4cd9-ba33-322be6f24728";
 
 class AppTextStyle {
   /// 32px Bold

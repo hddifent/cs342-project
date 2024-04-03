@@ -8,7 +8,6 @@ import "package:flutter_rating_bar/flutter_rating_bar.dart";
 
 import "../models/app_user.dart";
 
-// TODO: This is a placeholder. Don't forget to adjust this widget later.
 class DormCard extends StatelessWidget {
   static const double _roundRadius = 10;
   static const double pictureRatio = 100.00/120.00;

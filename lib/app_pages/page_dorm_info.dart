@@ -1,7 +1,6 @@
 import 'package:cs342_project/constants.dart';
 import 'package:cs342_project/models/dorm.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class DormInfoPage extends StatelessWidget {
   final Dorm dorm;
